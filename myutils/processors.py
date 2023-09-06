@@ -1,5 +1,6 @@
 from PIL import Image
 import os
+import numpy
 import torch
 
 MASK_PATH = "../dataset/masks/"
@@ -14,10 +15,22 @@ def toBinary(pred, t: float):
     # zero = torch.zeros_like(pred)
     # pred_bi = torch.where(pred < t, zero, one)
     # return pred_bi
+    if type(pred) is numpy.ndarray:
+        pred = torch.from_numpy(pred)
     pred = torch.sigmoid(pred)
     one = torch.ones_like(pred)
     zero = torch.zeros_like(pred)
     pred_bi = torch.where(pred < t, zero, one)
+    return pred_bi
+
+
+def toBinary_dss(pred):
+    if type(pred) is numpy.ndarray:
+        pred = torch.from_numpy(pred)
+    pred = torch.sigmoid(pred)
+    one = torch.ones_like(pred)
+    zero = torch.zeros_like(pred)
+    pred_bi = torch.where(pred is not True, zero, one)
     return pred_bi
 
 
