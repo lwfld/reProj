@@ -6,39 +6,55 @@ import torch
 MASK_PATH = "../dataset/masks/"
 
 
-def toBinary(pred, t: float):
-    # min_vals, _ = torch.min(pred, dim=1, keepdim=True)
-    # max_vals, _ = torch.max(pred, dim=1, keepdim=True)
+def norm(pred):
+    min = pred.min()
+    if min < 0:
+        pred += abs(min)
+        min = 0
+    max = pred.max()
+    dst = max - min
+    normed_pred = (pred - min).true_divide(dst)
+    return normed_pred
 
-    # pred = (pred - min_vals) / (max_vals - min_vals)
-    # one = torch.ones_like(pred)
-    # zero = torch.zeros_like(pred)
-    # pred_bi = torch.where(pred < t, zero, one)
-    # return pred_bi
+
+def toBinary(pred, t: float, _norm: bool = True):
+    """Convert predictions to binary format
+
+    Params:
+        pred: prediction out from model.
+        t: thredshold, float, from 0 to 1.
+        _norm: bool, should normalize, default=True
+
+    Return:
+        Tensor consists of 0 and 1.
+    """
+
+    # Convert ndarray to tensor
     if type(pred) is numpy.ndarray:
         pred = torch.from_numpy(pred)
-    pred = torch.sigmoid(pred)
+
+    # normalize the pred to [0, 1]
+    pred = norm(pred)
+
     one = torch.ones_like(pred)
     zero = torch.zeros_like(pred)
     pred_bi = torch.where(pred < t, zero, one)
     return pred_bi
 
 
-def toBinary_dss(pred):
-    if type(pred) is numpy.ndarray:
-        pred = torch.from_numpy(pred)
-    pred = torch.sigmoid(pred)
-    one = torch.ones_like(pred)
-    zero = torch.zeros_like(pred)
-    pred_bi = torch.where(pred is not True, zero, one)
-    return pred_bi
+def savePic(bi_pred, output_dir: str, file_name: str, _override: bool = False):
+    """Convert binary prediction as picture(single channel) in format of png
 
-
-def toBinaryPNG(pred, t: float, output_dir: str, file_name: str, override: bool = False):
+    Params:
+        bi_pred: prediction in binary format
+        output_dir: str, output directory
+        file_name: str, output file name
+        _override: bool, should override if file existed, default=False
+    """
     output_path = output_dir + file_name
 
-    if override or not os.path.isfile(output_path):
-        origin = toBinary(pred, t)
+    if _override or not os.path.isfile(output_path):
+        origin = bi_pred
         target = Image.new("1", (origin.shape[1], origin.shape[0]))
         pixels = target.load()
         for i in range(target.size[0]):
