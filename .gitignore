@@ -1,4 +1,5 @@
-dataset
+dataset/*
+!dataset/metafiles
 beexplainable
 __pycache__
 myutils/__pycache__
