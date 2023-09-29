@@ -1,0 +1,6 @@
+08.09
+
+1. paper work
+2. check why deepseg segments so many objects, check each eigenvectors x
+3. activation function, change sigmoid x
+4. dynamic threshold(https://medium.com/geekculture/image-thresholding-from-scratch-a66ae0fb6f09)

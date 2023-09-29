@@ -34,7 +34,8 @@ def toBinary(pred, t: float, _norm: bool = True):
         pred = torch.from_numpy(pred)
 
     # normalize the pred to [0, 1]
-    pred = norm(pred)
+    if _norm:
+        pred = norm(pred)
 
     one = torch.ones_like(pred)
     zero = torch.zeros_like(pred)

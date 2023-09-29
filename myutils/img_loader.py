@@ -26,3 +26,7 @@ def get_imgName(id: int):
 
 def get_img_by_id(id: int, path=IMAGE_DIR, format="jpg"):
     return Image.open(path + img_names[id - 1] + "." + format)
+
+
+def get_img_by_name(name: str, path=IMAGE_DIR, format="jpg"):
+    return Image.open(path + name + "." + format)
