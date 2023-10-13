@@ -4,3 +4,12 @@
 2. check why deepseg segments so many objects, check each eigenvectors x
 3. activation function, change sigmoid x
 4. dynamic threshold(https://medium.com/geekculture/image-thresholding-from-scratch-a66ae0fb6f09)
+
+1. load pictures
+2. generate predictions
+3. predictions to grey scale
+4. save grey scale masks
+
+1. load grey scale masks
+2. convert grey scale images to binary by thresholding
+3. calculate scores

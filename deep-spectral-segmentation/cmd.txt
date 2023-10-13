@@ -1,0 +1,19 @@
+general:
+python .\extract\extract.py extract_features --images_list "..\dataset\metafiles\images_whithout_ind.txt" --images_root "..\dataset\WildBees\" --output_dir "..\dataset\dss\features\dino_vits16\" --model_name dino_vits16 --batch_size 1
+python .\extract\extract.py extract_eigs --images_root "..\dataset\WildBees\" --features_dir "..\dataset\dss\features\dino_vits16\" --which_matrix "laplacian" --output_dir "..\dataset\dss\eigs\laplacian" --K 5
+
+ss:
+# Extract segments
+python .\extract\extract.py extract_multi_region_segmentations --non_adaptive_num_segments 15 --features_dir "..\dataset\dss\features\dino_vits16\" --eigs_dir "..\dataset\dss\eigs\laplacian" --output_dir "..\dataset\dss\multi_region_segmentation\laplacian"
+
+# Extract bounding boxes
+python .\extract\extract.py extract_bboxes --features_dir "..\dataset\dss\features\dino_vits16\" --segmentations_dir "..\dataset\dss\multi_region_segmentation\laplacian" --num_erode 2 --num_dilate 5 --downsample_factor 16 --output_file "..\dataset\dss\multi_region_bboxes\laplacian\bboxes.pth"
+
+# Extract bounding box features
+python .\extract\extract.py extract_bbox_features --model_name "dino_vits16" --images_root "..\dataset\WildBees\" --bbox_file "..\dataset\dss\multi_region_bboxes\laplacian\bboxes.pth" --output_file "..\dataset\dss\multi_region_bboxes\laplacian\bbox_features.pth"
+
+# Extract clusters
+python .\extract\extract.py extract_bbox_clusters --bbox_features_file "..\dataset\dss\multi_region_bboxes\laplacian\bbox_features.pth" --num_clusters 2 --output_file "..\dataset\dss\multi_region_bboxes\laplacian\bbox_clusters.pth"
+
+# Create semantic segmentations
+python .\extract\extract.py extract_semantic_segmentations --segmentations_dir "..\dataset\dss\multi_region_segmentation\laplacian" --bbox_clusters_file "..\dataset\dss\multi_region_bboxes\laplacian\bbox_clusters.pth" --output_dir "..\dataset\dss\semantic_segmentations\patches\laplacian\segmaps" 

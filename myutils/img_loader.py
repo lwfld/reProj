@@ -21,10 +21,16 @@ def get_imgNames():
 
 
 def get_imgName(id: int):
+    if id < 1:
+        print("Please enter a number greater than 0.")
+        return None
     return img_names[id - 1]
 
 
 def get_img_by_id(id: int, path=IMAGE_DIR, format="jpg"):
+    if id < 1:
+        print("Please enter a number greater than 0.")
+        return None
     return Image.open(path + img_names[id - 1] + "." + format)
 
 
