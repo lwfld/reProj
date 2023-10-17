@@ -16,7 +16,13 @@ def otsu_thresholding(img_gs):
     return threshold_val, torch.from_numpy(img_thresh).long()
 
 
-def toGreyscale(pred, method=1):
+def toTensor(img, _bi=False):
+    if _bi:
+        return torch.from_numpy(np.array(img.convert("1"))).long()
+    return torch.from_numpy(np.array(img.convert("L"))).long()
+
+
+def toGreyscale(pred, method=1, _gs=False):
     """Convert predictions to grey scale format
 
     Params:
@@ -24,13 +30,13 @@ def toGreyscale(pred, method=1):
         method: int, should normalize, 1|2
             1: default, minmax normalization
             2: sigmoid
+        _gs: bool dafault = False, should the scaled value map to (0-255) greyscale values
+             if set to False, remain(0-1)
 
     Return:
         Tensor consists of 0 and 1.
     """
-    # Convert ndarray to tensor
-    if type(pred) is np.ndarray:
-        pred = torch.from_numpy(pred)
+    assert isinstance(pred, torch.Tensor), "Expected input to be a PyTorch Tensor"
 
     # use min max values to map predictions to (0, 255)
     if method == 1:
@@ -46,16 +52,22 @@ def toGreyscale(pred, method=1):
         return pred
 
     # return int(ratio * 255)
-    return torch.round(pred * 255).long()
+    if _gs:
+        pred = torch.round(pred * 255).long()
+    return pred
 
 
 def toBinary(greyscale, t=0.5, mode=1):
     """Convert predictions to binary format
 
     Params:
-        pred: prediction out from model.
+        pred: prediction(normalized) out from model(range[0, 1]), or greyscale format prediction(range[0, 255]).
         t: thredshold, float, from 0 to 1.
-        mode: threhold method, 1 | 2, default: global
+        mode: threhold method, 1 | 2.
+            1: global thresholding
+            2: otsu's method,
+
+    Return: binary mask, if mode==2, also threshold values(unpack first)
 
     Return:
         Tensor consists of 0 and 1.
@@ -64,14 +76,20 @@ def toBinary(greyscale, t=0.5, mode=1):
 
     # Global threshold
     if mode == 1:
-        one = torch.ones_like(greyscale)
-        zero = torch.zeros_like(greyscale)
-        bi = torch.where(greyscale < t * 256, zero, one)
+        scale_factor = 1
+        if greyscale.max() > 1:
+            scale_factor = 256
+        one = torch.ones_like(greyscale, dtype=torch.uint8)
+        zero = torch.zeros_like(greyscale, dtype=torch.uint8)
+        bi = torch.where(greyscale < t * scale_factor, zero, one)
         return bi
 
     # Otsu's method
     elif mode == 2:
-        thr, bi = otsu_thresholding(greyscale)
+        scale_factor = 1
+        if greyscale.max() <= 1:
+            scale_factor = 256
+        thr, bi = otsu_thresholding(greyscale * scale_factor)
         return thr, bi
 
     else:
