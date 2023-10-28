@@ -92,7 +92,13 @@ def getBestIOUfromPreds(preds: List = None, gt=None, model="DSS", id: int = None
     from list of predictions.
 
     Params:
-        preds: list of predictions.
+        preds: Optional, list of predictions.
+        gt: ground truth of the input image
+        model: model used to make predictions, default=1
+            1: CLIPSeg
+            2: DSS
+        id: Optional, id of the image
+        name: Optional, name of the image
 
     Return:
         best prompt id, [best threshold, best score]
@@ -185,11 +191,11 @@ def getMeanIOU(model: int = 1, gs_mode=1, bi_mode=1, t=0.5, pred_idx=0, prob_thr
     return miou, duration
 
 
-def getBestMeanIOU(model: int = 1, gs_mode=1, bi_mode=1, t=0.5, pred_idx=0, prob_thr=0):
+def getBestMeanIOU(model: int = 1, gs_mode=1, bi_mode=1, pred_idx=0, prob_thr=0, prompts=None, numEigs=5):
     if model == 1:
-        segment = CLIPSeg.segment
+        _, segment = CLIPSeg.get_segment(prompts)
     elif model == 2:
-        segment = DSS.segment
+        _, segment = DSS.get_segment(numEigs)
     else:
         print("Wrong model number!")
         return None
@@ -219,9 +225,32 @@ def getBestMeanIOU(model: int = 1, gs_mode=1, bi_mode=1, t=0.5, pred_idx=0, prob
     return threshold_values[np.argmax(mious)], np.max(mious)
 
 
-def saveCSV(t=0.5, bi_mode=1):
+def getBestMeanIOUfromPreds(model: int = 1, gs_mode=1, bi_mode=1, prob_thr=0, prompts=None, numEigs=5):
+    if model == 1:
+        preds_length, _ = CLIPSeg.get_segment(prompts)
+    elif model == 2:
+        preds_length, _ = DSS.get_segment(numEigs)
+    else:
+        print("Wrong model number!")
+        return None
+
+    best_miou_vals = []
+    best_miou_thrs = []
+
+    for k in range(preds_length):
+        best_miou_thr, best_miou_val = getBestMeanIOU(model, gs_mode, bi_mode, k, prob_thr, prompts, numEigs)
+        best_miou_vals.append(best_miou_val)
+        best_miou_thrs.append(best_miou_thr)
+
+    return np.argmax(best_miou_vals), np.array(
+        [best_miou_thrs[np.argmax(best_miou_vals)], best_miou_vals[np.argmax(best_miou_vals)]]
+    )
+
+
+def saveCSV(file_name, t=0.5, bi_mode=1):
     data = {"img_id": [], "threshold": [], "eig_ind": [], "IOU": []}
     df = pd.DataFrame(data)
+    file_path = RESULTS_PATH + file_name + ".csv"
     for i in tqdm(range(len(img_names)), desc="Saving iou scores to file...", ncols=100):
         preds = DSS.segment(get_img(i + 1))
         gt = torch.from_numpy(np.array(get_img(i + 1, path=GT_PATH).convert("1"))).long()
@@ -232,4 +261,4 @@ def saveCSV(t=0.5, bi_mode=1):
             new_data = [{"img_id": i + 1, "threshold": t, "eig_ind": j, "IOU": iou}]
             new_df = pd.DataFrame(new_data)
             df = pd.concat([df, new_df], ignore_index=True)
-    df.to_csv("./results/DSS.csv", index=False)
+    df.to_csv(file_path, index=False)
