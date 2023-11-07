@@ -77,7 +77,7 @@
   abstract = {We demonstrate that scaling up language models greatly improves task-agnostic, few-shot performance, sometimes even becoming competitive with prior state-ofthe-art fine-tuning approaches. Specifically, we train GPT-3, an autoregressive language model with 175 billion parameters, 10x more than any previous nonsparse language model, and test its performance in the few-shot setting. For all tasks, GPT-3 is applied without any gradient updates or fine-tuning, with tasks and few-shot demonstrations specified purely via text interaction with the model. GPT-3 achieves strong performance on many NLP datasets, including translation, question-answering, and cloze tasks. We also identify some datasets where GPT3's few-shot learning still struggles, as well as some datasets where GPT-3 faces methodological issues related to training on large web corpora.},
   langid = {english},
   keywords = {material[r]},
-  file = {C:\Users\yitao\Zotero\storage\JGZRBJ34\Brown 等 - Language Models are Few-Shot Learners.pdf}
+  file = {C:\Users\yitao\Nutstore\1\_BACKUPs\Zotero\pdfs\Project\bee\2020_Brown_et.al_Language_Models_are_Few-Shot_Learners.pdf}
 }
 
 @inproceedings{bucherZeroShotSemanticSegmentation2019,
@@ -91,6 +91,23 @@
   abstract = {Semantic segmentation models are limited in their ability to scale to large numbers of object classes. In this paper, we introduce the new task of zero-shot semantic segmentation: learning pixel-wise classifiers for never-seen object categories with zero training examples. To this end, we present a novel architecture, ZS3Net, combining a deep visual  segmentation model with an approach to generate visual representations from semantic word embeddings. By this way, ZS3Net addresses pixel classification tasks where both seen and unseen categories are faced at test time (so called generalized zero-shot classification). Performance is further improved by a self-training step that relies on automatic pseudo-labeling of pixels from unseen classes. On the two standard segmentation datasets, Pascal-VOC and Pascal-Context, we propose zero-shot benchmarks and set competitive baselines. For complex scenes as ones in the Pascal-Context dataset, we extend our approach by using a graph-context encoding to fully leverage spatial context priors coming from class-wise segmentation maps.},
   keywords = {SELECTED},
   file = {C:\Users\yitao\Nutstore\1\_BACKUPs\Zotero\pdfs\Project\bee\2019_Bucher_et.al_Zero-Shot_Semantic_Segmentation.pdf}
+}
+
+@misc{caronEmergingPropertiesSelfSupervised2021,
+  title = {Emerging {{Properties}} in {{Self-Supervised Vision Transformers}}},
+  author = {Caron, Mathilde and Touvron, Hugo and Misra, Ishan and J{\'e}gou, Herv{\'e} and Mairal, Julien and Bojanowski, Piotr and Joulin, Armand},
+  year = {2021},
+  month = may,
+  number = {arXiv:2104.14294},
+  eprint = {2104.14294},
+  primaryclass = {cs},
+  publisher = {{arXiv}},
+  doi = {10.48550/arXiv.2104.14294},
+  urldate = {2023-10-22},
+  abstract = {In this paper, we question if self-supervised learning provides new properties to Vision Transformer (ViT) that stand out compared to convolutional networks (convnets). Beyond the fact that adapting self-supervised methods to this architecture works particularly well, we make the following observations: first, self-supervised ViT features contain explicit information about the semantic segmentation of an image, which does not emerge as clearly with supervised ViTs, nor with convnets. Second, these features are also excellent k-NN classifiers, reaching 78.3\% top-1 on ImageNet with a small ViT. Our study also underlines the importance of momentum encoder, multi-crop training, and the use of small patches with ViTs. We implement our findings into a simple self-supervised method, called DINO, which we interpret as a form of self-distillation with no labels. We show the synergy between DINO and ViTs by achieving 80.1\% top-1 on ImageNet in linear evaluation with ViT-Base.},
+  archiveprefix = {arxiv},
+  keywords = {material[r]},
+  file = {C\:\\Users\\yitao\\Nutstore\\1\\_BACKUPs\\Zotero\\pdfs\\Project\\bee\\2021_Caron_et.al_Emerging_Properties_in_Self-Supervised_Vision_Transformers.pdf;C\:\\Users\\yitao\\Zotero\\storage\\55YW7DUT\\2104.html}
 }
 
 @inproceedings{caruanaEmpiricalComparisonSupervised2006,
@@ -123,6 +140,23 @@
   langid = {english},
   keywords = {material[r]},
   file = {C:\Users\yitao\Nutstore\1\_BACKUPs\Zotero\pdfs\Project\bee\2016_Chen_et.al_DeepLab.pdf}
+}
+
+@misc{chenEmpiricalStudyTraining2021,
+  title = {An {{Empirical Study}} of {{Training Self-Supervised Vision Transformers}}},
+  author = {Chen, Xinlei and Xie, Saining and He, Kaiming},
+  year = {2021},
+  month = aug,
+  number = {arXiv:2104.02057},
+  eprint = {2104.02057},
+  primaryclass = {cs},
+  publisher = {{arXiv}},
+  doi = {10.48550/arXiv.2104.02057},
+  urldate = {2023-10-22},
+  abstract = {This paper does not describe a novel method. Instead, it studies a straightforward, incremental, yet must-know baseline given the recent progress in computer vision: self-supervised learning for Vision Transformers (ViT). While the training recipes for standard convolutional networks have been highly mature and robust, the recipes for ViT are yet to be built, especially in the self-supervised scenarios where training becomes more challenging. In this work, we go back to basics and investigate the effects of several fundamental components for training self-supervised ViT. We observe that instability is a major issue that degrades accuracy, and it can be hidden by apparently good results. We reveal that these results are indeed partial failure, and they can be improved when training is made more stable. We benchmark ViT results in MoCo v3 and several other self-supervised frameworks, with ablations in various aspects. We discuss the currently positive evidence as well as challenges and open questions. We hope that this work will provide useful data points and experience for future research.},
+  archiveprefix = {arxiv},
+  keywords = {material[r]},
+  file = {C\:\\Users\\yitao\\Nutstore\\1\\_BACKUPs\\Zotero\\pdfs\\Project\\bee\\2021_Chen_et.al_An_Empirical_Study_of_Training_Self-Supervised_Vision_Transformers.pdf;C\:\\Users\\yitao\\Zotero\\storage\\8N25RUVM\\2104.html}
 }
 
 @misc{chenEncoderDecoderAtrousSeparable2018,
@@ -207,16 +241,22 @@
   annotation = {titleTranslation: 朝着生物多样性的机器学习方法：一种新颖的野生蜜蜂数据集及用于机器学习辅助珍稀物种注释的可解释人工智能（XAI）方法的评估}
 }
 
-@inproceedings{choPiCIEUnsupervisedSemantic2021,
-  title = {{{PiCIE}}: {{Unsupervised Semantic Segmentation Using Invariance}} and {{Equivariance}} in {{Clustering}}},
+@misc{choPiCIEUnsupervisedSemantic2021a,
+  title = {{{PiCIE}}: {{Unsupervised Semantic Segmentation}} Using {{Invariance}} and {{Equivariance}} in {{Clustering}}},
   shorttitle = {{{PiCIE}}},
-  booktitle = {Proceedings of the {{IEEE}}/{{CVF Conference}} on {{Computer Vision}} and {{Pattern Recognition}}},
   author = {Cho, Jang Hyun and Mall, Utkarsh and Bala, Kavita and Hariharan, Bharath},
   year = {2021},
-  pages = {16794--16804},
-  urldate = {2023-10-12},
-  langid = {english},
-  file = {C:\Users\yitao\Nutstore\1\_BACKUPs\Zotero\pdfs\Project\bee\2021_Cho_et.al_PiCIE.pdf}
+  month = mar,
+  number = {arXiv:2103.17070},
+  eprint = {2103.17070},
+  primaryclass = {cs},
+  publisher = {{arXiv}},
+  doi = {10.48550/arXiv.2103.17070},
+  urldate = {2023-10-22},
+  abstract = {We present a new framework for semantic segmentation without annotations via clustering. Off-the-shelf clustering methods are limited to curated, single-label, and object-centric images yet real-world data are dominantly uncurated, multi-label, and scene-centric. We extend clustering from images to pixels and assign separate cluster membership to different instances within each image. However, solely relying on pixel-wise feature similarity fails to learn high-level semantic concepts and overfits to low-level visual cues. We propose a method to incorporate geometric consistency as an inductive bias to learn invariance and equivariance for photometric and geometric variations. With our novel learning objective, our framework can learn high-level semantic concepts. Our method, PiCIE (Pixel-level feature Clustering using Invariance and Equivariance), is the first method capable of segmenting both things and stuff categories without any hyperparameter tuning or task-specific pre-processing. Our method largely outperforms existing baselines on COCO and Cityscapes with +17.5 Acc. and +4.5 mIoU. We show that PiCIE gives a better initialization for standard supervised training. The code is available at https://github.com/janghyuncho/PiCIE.},
+  archiveprefix = {arxiv},
+  keywords = {material[r]},
+  file = {C\:\\Users\\yitao\\Nutstore\\1\\_BACKUPs\\Zotero\\pdfs\\Project\\bee\\2021_Cho_et.al_PiCIE.pdf;C\:\\Users\\yitao\\Zotero\\storage\\XGSLIZVH\\2103.html}
 }
 
 @misc{COCOCommonObjects,
@@ -257,6 +297,23 @@
   file = {C\:\\Users\\yitao\\Nutstore\\1\\_BACKUPs\\Zotero\\pdfs\\Project\\bee\\2019_Devlin_et.al_BERT.pdf;C\:\\Users\\yitao\\Zotero\\storage\\JYGAMM8C\\1810.html}
 }
 
+@misc{doerschUnsupervisedVisualRepresentation2016,
+  title = {Unsupervised {{Visual Representation Learning}} by {{Context Prediction}}},
+  author = {Doersch, Carl and Gupta, Abhinav and Efros, Alexei A.},
+  year = {2016},
+  month = jan,
+  number = {arXiv:1505.05192},
+  eprint = {1505.05192},
+  primaryclass = {cs},
+  publisher = {{arXiv}},
+  doi = {10.48550/arXiv.1505.05192},
+  urldate = {2023-10-22},
+  abstract = {This work explores the use of spatial context as a source of free and plentiful supervisory signal for training a rich visual representation. Given only a large, unlabeled image collection, we extract random pairs of patches from each image and train a convolutional neural net to predict the position of the second patch relative to the first. We argue that doing well on this task requires the model to learn to recognize objects and their parts. We demonstrate that the feature representation learned using this within-image context indeed captures visual similarity across images. For example, this representation allows us to perform unsupervised visual discovery of objects like cats, people, and even birds from the Pascal VOC 2011 detection dataset. Furthermore, we show that the learned ConvNet can be used in the R-CNN framework and provides a significant boost over a randomly-initialized ConvNet, resulting in state-of-the-art performance among algorithms which use only Pascal-provided training set annotations.},
+  archiveprefix = {arxiv},
+  keywords = {material[r]},
+  file = {C\:\\Users\\yitao\\Nutstore\\1\\_BACKUPs\\Zotero\\pdfs\\Project\\bee\\2016_Doersch_et.al_Unsupervised_Visual_Representation_Learning_by_Context_Prediction.pdf;C\:\\Users\\yitao\\Zotero\\storage\\MD2K4F5W\\1505.html}
+}
+
 @misc{dosovitskiyImageWorth16x162021,
   title = {An {{Image}} Is {{Worth}} 16x16 {{Words}}: {{Transformers}} for {{Image Recognition}} at {{Scale}}},
   shorttitle = {An {{Image}} Is {{Worth}} 16x16 {{Words}}},
@@ -273,6 +330,22 @@
   archiveprefix = {arxiv},
   keywords = {material[r]},
   file = {C\:\\Users\\yitao\\Nutstore\\1\\_BACKUPs\\Zotero\\pdfs\\Project\\bee\\2021_Dosovitskiy_et.al_An_Image_is_Worth_16x16_Words.pdf;C\:\\Users\\yitao\\Zotero\\storage\\WWWVKQ35\\2010.html}
+}
+
+@article{fiedlerAlgebraicConnectivityGraphs1973,
+  title = {Algebraic Connectivity of Graphs},
+  author = {Fiedler, Miroslav},
+  year = {1973},
+  journal = {Czechoslovak Mathematical Journal},
+  volume = {23},
+  number = {2},
+  pages = {298--305},
+  issn = {0011-4642, 1572-9141},
+  doi = {10.21136/CMJ.1973.101168},
+  urldate = {2023-10-23},
+  langid = {english},
+  keywords = {material[r]},
+  file = {C:\Users\yitao\Zotero\storage\ZI6L98RL\Fiedler - 1973 - Algebraic connectivity of graphs.pdf}
 }
 
 @misc{FullArticleSurvey,
@@ -317,6 +390,23 @@
   file = {C\:\\Users\\yitao\\Nutstore\\1\\_BACKUPs\\Zotero\\pdfs\\Project\\bee\\2017_Garcia-Garcia_et.al_A_Review_on_Deep_Learning_Techniques_Applied_to_Semantic_Segmentation.pdf;C\:\\Users\\yitao\\Zotero\\storage\\S5BFWCEA\\1704.html}
 }
 
+@misc{gidarisUnsupervisedRepresentationLearning2018,
+  title = {Unsupervised {{Representation Learning}} by {{Predicting Image Rotations}}},
+  author = {Gidaris, Spyros and Singh, Praveer and Komodakis, Nikos},
+  year = {2018},
+  month = mar,
+  number = {arXiv:1803.07728},
+  eprint = {1803.07728},
+  primaryclass = {cs},
+  publisher = {{arXiv}},
+  doi = {10.48550/arXiv.1803.07728},
+  urldate = {2023-10-22},
+  abstract = {Over the last years, deep convolutional neural networks (ConvNets) have transformed the field of computer vision thanks to their unparalleled capacity to learn high level semantic image features. However, in order to successfully learn those features, they usually require massive amounts of manually labeled data, which is both expensive and impractical to scale. Therefore, unsupervised semantic feature learning, i.e., learning without requiring manual annotation effort, is of crucial importance in order to successfully harvest the vast amount of visual data that are available today. In our work we propose to learn image features by training ConvNets to recognize the 2d rotation that is applied to the image that it gets as input. We demonstrate both qualitatively and quantitatively that this apparently simple task actually provides a very powerful supervisory signal for semantic feature learning. We exhaustively evaluate our method in various unsupervised feature learning benchmarks and we exhibit in all of them state-of-the-art performance. Specifically, our results on those benchmarks demonstrate dramatic improvements w.r.t. prior state-of-the-art approaches in unsupervised representation learning and thus significantly close the gap with supervised feature learning. For instance, in PASCAL VOC 2007 detection task our unsupervised pre-trained AlexNet model achieves the state-of-the-art (among unsupervised methods) mAP of 54.4\% that is only 2.4 points lower from the supervised case. We get similarly striking results when we transfer our unsupervised learned features on various other tasks, such as ImageNet classification, PASCAL classification, PASCAL segmentation, and CIFAR-10 classification. The code and models of our paper will be published on: https://github.com/gidariss/FeatureLearningRotNet .},
+  archiveprefix = {arxiv},
+  keywords = {material[r]},
+  file = {C\:\\Users\\yitao\\Nutstore\\1\\_BACKUPs\\Zotero\\pdfs\\Project\\bee\\2018_Gidaris_et.al_Unsupervised_Representation_Learning_by_Predicting_Image_Rotations.pdf;C\:\\Users\\yitao\\Zotero\\storage\\2RUB6JNC\\1803.html}
+}
+
 @article{guoReviewSemanticSegmentation2018,
   title = {A Review of Semantic Segmentation Using Deep Neural Networks},
   author = {Guo, Yanming and Liu, Yu and Georgiou, Theodoros and Lew, Michael S.},
@@ -348,6 +438,7 @@
   urldate = {2023-09-25},
   abstract = {Unsupervised semantic segmentation aims to discover and localize semantically meaningful categories within image corpora without any form of annotation. To solve this task, algorithms must produce features for every pixel that are both semantically meaningful and compact enough to form distinct clusters. Unlike previous works which achieve this with a single end-to-end framework, we propose to separate feature learning from cluster compactification. Empirically, we show that current unsupervised feature learning frameworks already generate dense features whose correlations are semantically consistent. This observation motivates us to design STEGO (\$\textbackslash textbf\{S\}\$elf-supervised \$\textbackslash textbf\{T\}\$ransformer with \$\textbackslash textbf\{E\}\$nergy-based \$\textbackslash textbf\{G\}\$raph \$\textbackslash textbf\{O\}\$ptimization), a novel framework that distills unsupervised features into high-quality discrete semantic labels. At the core of STEGO is a novel contrastive loss function that encourages features to form compact clusters while preserving their relationships across the corpora. STEGO yields a significant improvement over the prior state of the art, on both the CocoStuff (\$\textbackslash textbf\{+14 mIoU\}\$) and Cityscapes (\$\textbackslash textbf\{+9 mIoU\}\$) semantic segmentation challenges.},
   archiveprefix = {arxiv},
+  keywords = {material[r]},
   file = {C\:\\Users\\yitao\\Nutstore\\1\\_BACKUPs\\Zotero\\pdfs\\Project\\bee\\2022_Hamilton_et.al_Unsupervised_Semantic_Segmentation_by_Distilling_Feature_Correspondences.pdf;C\:\\Users\\yitao\\Zotero\\storage\\M9V3KRP2\\2203.html}
 }
 
@@ -406,7 +497,7 @@
   journal = {iNaturalist},
   urldate = {2023-09-29},
   abstract = {Xylocopa violacea 的观察},
-  howpublished = {https://www.inaturalist.org/observations?photo\_license=CC-BY-NC\&place\_id=any\&quality\_grade=research\&subview=table\&taxon\_id=124145},
+  howpublished = {https://www.inaturalist.org/observations?photo\_license=CC-BY-NC\&quality\_grade=research\&subview=table\&taxon\_id=124145},
   langid = {chinese},
   file = {C:\Users\yitao\Zotero\storage\WKERDKP7\observations.html}
 }
@@ -459,6 +550,23 @@
   urldate = {2023-09-21},
   abstract = {Automatic identification on insect images is a rapid identification method, and image segmentation is a key process in insect image automatic identification. Based on searching and sorting the recent references on insect image segmentation, we found that the research on insect image segmentation are increasing rapidly. With the development of image processing technology, all kinds of segmentation...},
   langid = {chinese}
+}
+
+@misc{jiInvariantInformationClustering2019,
+  title = {Invariant {{Information Clustering}} for {{Unsupervised Image Classification}} and {{Segmentation}}},
+  author = {Ji, Xu and Henriques, Joao F. and Vedaldi, Andrea},
+  year = {2019},
+  month = aug,
+  number = {arXiv:1807.06653},
+  eprint = {1807.06653},
+  primaryclass = {cs},
+  publisher = {{arXiv}},
+  doi = {10.48550/arXiv.1807.06653},
+  urldate = {2023-10-22},
+  abstract = {We present a novel clustering objective that learns a neural network classifier from scratch, given only unlabelled data samples. The model discovers clusters that accurately match semantic classes, achieving state-of-the-art results in eight unsupervised clustering benchmarks spanning image classification and segmentation. These include STL10, an unsupervised variant of ImageNet, and CIFAR10, where we significantly beat the accuracy of our closest competitors by 6.6 and 9.5 absolute percentage points respectively. The method is not specialised to computer vision and operates on any paired dataset samples; in our experiments we use random transforms to obtain a pair from each image. The trained network directly outputs semantic labels, rather than high dimensional representations that need external processing to be usable for semantic clustering. The objective is simply to maximise mutual information between the class assignments of each pair. It is easy to implement and rigorously grounded in information theory, meaning we effortlessly avoid degenerate solutions that other clustering methods are susceptible to. In addition to the fully unsupervised mode, we also test two semi-supervised settings. The first achieves 88.8\% accuracy on STL10 classification, setting a new global state-of-the-art over all existing methods (whether supervised, semi-supervised or unsupervised). The second shows robustness to 90\% reductions in label coverage, of relevance to applications that wish to make use of small amounts of labels. github.com/xu-ji/IIC},
+  archiveprefix = {arxiv},
+  keywords = {material[r]},
+  file = {C\:\\Users\\yitao\\Nutstore\\1\\_BACKUPs\\Zotero\\pdfs\\Project\\bee\\2019_Ji_et.al_Invariant_Information_Clustering_for_Unsupervised_Image_Classification_and.pdf;C\:\\Users\\yitao\\Zotero\\storage\\6FXAVE4L\\1807.html}
 }
 
 @article{khanTransformersVisionSurvey2022,
@@ -630,7 +738,19 @@
   abstract = {Referring expression comprehension (REC) and segmentation (RES) are two highly-related tasks, which both aim at identifying the referent according to a natural language expression. In this paper, we propose a novel Multi-task Collaborative Network (MCN)1 to achieve a joint learning of REC and RES for the first time. In MCN, RES can help REC to achieve better language-vision alignment, while REC can help RES to better locate the referent. In addition, we address a key challenge in this multi-task setup, i.e., the prediction conflict, with two innovative designs namely, Consistency Energy Maximization (CEM) and Adaptive Soft Non-Located Suppression (ASNLS). Specifically, CEM enables REC and RES to focus on similar visual regions by maximizing the consistency energy between two tasks. ASNLS supresses the response of unrelated regions in RES based on the prediction of REC. To validate our model, we conduct extensive experiments on three benchmark datasets of REC and RES, i.e., RefCOCO, RefCOCO+ and RefCOCOg. The experimental results report the significant performance gains of MCN over all existing methods, i.e., up to +7.13\% for REC and +11.50\% for RES over SOTA, which well confirm the validity of our model for joint REC and RES learning.},
   isbn = {978-1-72817-168-5},
   langid = {english},
-  file = {C:\Users\yitao\Zotero\storage\D9GWZSNS\Luo 等 - 2020 - Multi-Task Collaborative Network for Joint Referri.pdf}
+  file = {C:\Users\yitao\Nutstore\1\_BACKUPs\Zotero\pdfs\Project\bee\2020_Luo_et.al_Multi-Task_Collaborative_Network_for_Joint_Referring_Expression_Comprehension.pdf}
+}
+
+@misc{MeasuringPerformanceConfusion2019,
+  title = {Measuring {{Performance}}: {{The Confusion Matrix}}},
+  shorttitle = {Measuring {{Performance}}},
+  year = {2019},
+  month = feb,
+  journal = {Glass Box},
+  urldate = {2023-10-23},
+  abstract = {Confusion matrices are calculated using the predictions of a model on a data set. By looking at a confusion matrix, you can gain a better understanding of the strengths and weaknesses of your model\ldots},
+  langid = {english},
+  file = {C:\Users\yitao\Zotero\storage\IRMCXZ8A\measuring-performance-the-confusion-matrix.html}
 }
 
 @article{melas-kyriaziDeepSpectralMethods2022,
@@ -691,6 +811,22 @@
   file = {C\:\\Users\\yitao\\Nutstore\\1\\_BACKUPs\\Zotero\\pdfs\\Project\\bee\\2022_Mo_et.al_Review_the_state-of-the-art_technologies_of_semantic_segmentation_based_on_deep.pdf;C\:\\Users\\yitao\\Zotero\\storage\\KUEJP55N\\S0925231222000054.html}
 }
 
+@misc{norooziUnsupervisedLearningVisual2017,
+  title = {Unsupervised {{Learning}} of {{Visual Representations}} by {{Solving Jigsaw Puzzles}}},
+  author = {Noroozi, Mehdi and Favaro, Paolo},
+  year = {2017},
+  month = aug,
+  number = {arXiv:1603.09246},
+  eprint = {1603.09246},
+  primaryclass = {cs},
+  publisher = {{arXiv}},
+  doi = {10.48550/arXiv.1603.09246},
+  urldate = {2023-10-22},
+  abstract = {In this paper we study the problem of image representation learning without human annotation. By following the principles of self-supervision, we build a convolutional neural network (CNN) that can be trained to solve Jigsaw puzzles as a pretext task, which requires no manual labeling, and then later repurposed to solve object classification and detection. To maintain the compatibility across tasks we introduce the context-free network (CFN), a siamese-ennead CNN. The CFN takes image tiles as input and explicitly limits the receptive field (or context) of its early processing units to one tile at a time. We show that the CFN includes fewer parameters than AlexNet while preserving the same semantic learning capabilities. By training the CFN to solve Jigsaw puzzles, we learn both a feature mapping of object parts as well as their correct spatial arrangement. Our experimental evaluations show that the learned features capture semantically relevant content. Our proposed method for learning visual representations outperforms state of the art methods in several transfer learning benchmarks.},
+  archiveprefix = {arxiv},
+  file = {C\:\\Users\\yitao\\Nutstore\\1\\_BACKUPs\\Zotero\\pdfs\\Project\\bee\\2017_Noroozi_Favaro_Unsupervised_Learning_of_Visual_Representations_by_Solving_Jigsaw_Puzzles.pdf;C\:\\Users\\yitao\\Zotero\\storage\\5HHIMQCK\\1603.html}
+}
+
 @article{olaodeUnsupervisedClassificationImages2014,
   title = {Unsupervised {{Classification}} of {{Images}}: {{A Review}}},
   shorttitle = {Unsupervised {{Classification}} of {{Images}}},
@@ -701,6 +837,7 @@
   volume = {8},
   pages = {2014--325},
   abstract = {Unsupervised image classification is the process by which each image in a dataset is identified to be a member of one of the inherent categories present in the image collection without the use of labelled training samples. Unsupervised categorisation of images relies on unsupervised machine learning algorithms for its implementation. This paper identifies clustering algorithms and dimension reduction algorithms as the two main classes of unsupervised machine learning algorithms needed in unsupervised image categorisation, and then reviews how these algorithms are used in some notable implementation of unsupervised image classification algorithms.},
+  keywords = {material[r]},
   file = {C:\Users\yitao\Nutstore\1\_BACKUPs\Zotero\pdfs\Project\bee\2014_Olaode_et.al_Unsupervised_Classification_of_Images.pdf}
 }
 
@@ -718,6 +855,34 @@
   abstract = {The field of machine learning has taken a dramatic twist in recent times, with the rise of the Artificial Neural Network (ANN). These biologically inspired computational models are able to far exceed the performance of previous forms of artificial intelligence in common machine learning tasks. One of the most impressive forms of ANN architecture is that of the Convolutional Neural Network (CNN). CNNs are primarily used to solve difficult image-driven pattern recognition tasks and with their precise yet simple architecture, offers a simplified method of getting started with ANNs. This document provides a brief introduction to CNNs, discussing recently published papers and newly formed techniques in developing these brilliantly fantastic image recognition models. This introduction assumes you are familiar with the fundamentals of ANNs and machine learning.},
   archiveprefix = {arxiv},
   file = {C\:\\Users\\yitao\\Nutstore\\1\\_BACKUPs\\Zotero\\pdfs\\Project\\bee\\2015_O'Shea_Nash_An_Introduction_to_Convolutional_Neural_Networks.pdf;C\:\\Users\\yitao\\Zotero\\storage\\5LCAVS3T\\1511.html}
+}
+
+@article{OtsuMethod2023,
+  title = {Otsu's Method},
+  year = {2023},
+  month = aug,
+  journal = {Wikipedia},
+  urldate = {2023-10-27},
+  abstract = {In computer vision and image processing, Otsu's method, named after Nobuyuki Otsu (大津展之, \=Otsu Nobuyuki), is used to perform automatic image thresholding. In the simplest form, the algorithm returns a single intensity threshold that separate pixels into two classes, foreground and background. This threshold is determined by minimizing intra-class intensity variance, or equivalently, by maximizing inter-class variance. Otsu's method is a one-dimensional discrete analogue of Fisher's Discriminant Analysis, is related to Jenks optimization method, and is equivalent to a globally optimal k-means performed on the intensity histogram. The extension to multi-level thresholding was described in the original paper, and computationally efficient implementations have since been proposed.},
+  copyright = {Creative Commons Attribution-ShareAlike License},
+  langid = {english},
+  annotation = {Page Version ID: 1169237407},
+  file = {C:\Users\yitao\Zotero\storage\IUU6UVQK\Otsu's_method.html}
+}
+
+@article{otsuThresholdSelectionMethod1979,
+  title = {A {{Threshold Selection Method}} from {{Gray-Level Histograms}}},
+  author = {Otsu, Nobuyuki},
+  year = {1979},
+  month = jan,
+  journal = {IEEE Transactions on Systems, Man, and Cybernetics},
+  volume = {9},
+  number = {1},
+  pages = {62--66},
+  issn = {2168-2909},
+  doi = {10.1109/TSMC.1979.4310076},
+  urldate = {2023-10-19},
+  file = {C:\Users\yitao\Nutstore\1\_BACKUPs\Zotero\pdfs\Project\bee\1979_Otsu_A_Threshold_Selection_Method_from_Gray-Level_Histograms.pdf}
 }
 
 @article{panCrossViewSemanticSegmentation2020,
@@ -750,6 +915,24 @@
   file = {C\:\\Users\\yitao\\Nutstore\\1\\_BACKUPs\\Zotero\\pdfs\\Project\\bee\\2015_Papandreou_et.al_Weakly-and_Semi-Supervised_Learning_of_a_Deep_Convolutional_Network_for.pdf;C\:\\Users\\yitao\\Zotero\\storage\\BARR8FPZ\\7410560.html}
 }
 
+@misc{pathakContextEncodersFeature2016,
+  title = {Context {{Encoders}}: {{Feature Learning}} by {{Inpainting}}},
+  shorttitle = {Context {{Encoders}}},
+  author = {Pathak, Deepak and Krahenbuhl, Philipp and Donahue, Jeff and Darrell, Trevor and Efros, Alexei A.},
+  year = {2016},
+  month = nov,
+  number = {arXiv:1604.07379},
+  eprint = {1604.07379},
+  primaryclass = {cs},
+  publisher = {{arXiv}},
+  doi = {10.48550/arXiv.1604.07379},
+  urldate = {2023-10-22},
+  abstract = {We present an unsupervised visual feature learning algorithm driven by context-based pixel prediction. By analogy with auto-encoders, we propose Context Encoders -- a convolutional neural network trained to generate the contents of an arbitrary image region conditioned on its surroundings. In order to succeed at this task, context encoders need to both understand the content of the entire image, as well as produce a plausible hypothesis for the missing part(s). When training context encoders, we have experimented with both a standard pixel-wise reconstruction loss, as well as a reconstruction plus an adversarial loss. The latter produces much sharper results because it can better handle multiple modes in the output. We found that a context encoder learns a representation that captures not just appearance but also the semantics of visual structures. We quantitatively demonstrate the effectiveness of our learned features for CNN pre-training on classification, detection, and segmentation tasks. Furthermore, context encoders can be used for semantic inpainting tasks, either stand-alone or as initialization for non-parametric methods.},
+  archiveprefix = {arxiv},
+  keywords = {material[r]},
+  file = {C\:\\Users\\yitao\\Nutstore\\1\\_BACKUPs\\Zotero\\pdfs\\Project\\bee\\2016_Pathak_et.al_Context_Encoders.pdf;C\:\\Users\\yitao\\Zotero\\storage\\RWE65592\\1604.html}
+}
+
 @misc{pelaez-vegasSurveySemiSupervisedSemantic2023,
   title = {A {{Survey}} on {{Semi-Supervised Semantic Segmentation}}},
   author = {{Pel{\'a}ez-Vegas}, Adrian and Mesejo, Pablo and Luengo, Juli{\'a}n},
@@ -764,6 +947,23 @@
   abstract = {Semantic segmentation is one of the most challenging tasks in computer vision. However, in many applications, a frequent obstacle is the lack of labeled images, due to the high cost of pixel-level labeling. In this scenario, it makes sense to approach the problem from a semi-supervised point of view, where both labeled and unlabeled images are exploited. In recent years this line of research has gained much interest and many approaches have been published in this direction. Therefore, the main objective of this study is to provide an overview of the current state of the art in semi-supervised semantic segmentation, offering an updated taxonomy of all existing methods to date. This is complemented by an experimentation with a variety of models representing all the categories of the taxonomy on the most widely used becnhmark datasets in the literature, and a final discussion on the results obtained, the challenges and the most promising lines of future research.},
   archiveprefix = {arxiv},
   file = {C\:\\Users\\yitao\\Nutstore\\1\\_BACKUPs\\Zotero\\pdfs\\Project\\bee\\2023_Peláez-Vegas_et.al_A_Survey_on_Semi-Supervised_Semantic_Segmentation.pdf;C\:\\Users\\yitao\\Zotero\\storage\\G6SAGBD5\\2302.html}
+}
+
+@misc{perezFiLMVisualReasoning2017,
+  title = {{{FiLM}}: {{Visual Reasoning}} with a {{General Conditioning Layer}}},
+  shorttitle = {{{FiLM}}},
+  author = {Perez, Ethan and Strub, Florian and {de Vries}, Harm and Dumoulin, Vincent and Courville, Aaron},
+  year = {2017},
+  month = dec,
+  number = {arXiv:1709.07871},
+  eprint = {1709.07871},
+  primaryclass = {cs, stat},
+  publisher = {{arXiv}},
+  urldate = {2023-10-27},
+  abstract = {We introduce a general-purpose conditioning method for neural networks called FiLM: Feature-wise Linear Modulation. FiLM layers influence neural network computation via a simple, feature-wise affine transformation based on conditioning information. We show that FiLM layers are highly effective for visual reasoning \textemdash{} answering image-related questions which require a multi-step, high-level process \textemdash{} a task which has proven difficult for standard deep learning methods that do not explicitly model reasoning. Specifically, we show on visual reasoning tasks that FiLM layers 1) halve state-of-theart error for the CLEVR benchmark, 2) modulate features in a coherent manner, 3) are robust to ablations and architectural modifications, and 4) generalize well to challenging, new data from few examples or even zero-shot.},
+  archiveprefix = {arxiv},
+  langid = {english},
+  file = {C:\Users\yitao\Zotero\storage\J8ZVS9E2\Perez 等 - 2017 - FiLM Visual Reasoning with a General Conditioning.pdf}
 }
 
 @misc{qinFreeSegUnifiedUniversal2023,
@@ -808,7 +1008,7 @@
   abstract = {Natural language understanding comprises a wide range of diverse tasks such as textual entailment, question answering, semantic similarity assessment, and document classification. Although large unlabeled text corpora are abundant, labeled data for learning these specific tasks is scarce, making it challenging for discriminatively trained models to perform adequately. We demonstrate that large gains on these tasks can be realized by generative pre-training of a language model on a diverse corpus of unlabeled text, followed by discriminative fine-tuning on each specific task. In contrast to previous approaches, we make use of task-aware input transformations during fine-tuning to achieve effective transfer while requiring minimal changes to the model architecture. We demonstrate the effectiveness of our approach on a wide range of benchmarks for natural language understanding. Our general task-agnostic model outperforms discriminatively trained models that use architectures specifically crafted for each task, significantly improving upon the state of the art in 9 out of the 12 tasks studied. For instance, we achieve absolute improvements of 8.9\% on commonsense reasoning (Stories Cloze Test), 5.7\% on question answering (RACE), and 1.5\% on textual entailment (MultiNLI).},
   langid = {english},
   keywords = {material[r]},
-  file = {C:\Users\yitao\Zotero\storage\P6SSKEZJ\Radford 等 - Improving Language Understanding by Generative Pre.pdf}
+  file = {C:\Users\yitao\Nutstore\1\_BACKUPs\Zotero\pdfs\Project\bee\2018_Radford_et.al_Improving_Language_Understanding_by_Generative_Pre-Training.pdf}
 }
 
 @article{radfordLanguageModelsAre2019,
@@ -818,7 +1018,7 @@
   abstract = {Natural language processing tasks, such as question answering, machine translation, reading comprehension, and summarization, are typically approached with supervised learning on taskspecific datasets. We demonstrate that language models begin to learn these tasks without any explicit supervision when trained on a new dataset of millions of webpages called WebText. When conditioned on a document plus questions, the answers generated by the language model reach 55 F1 on the CoQA dataset - matching or exceeding the performance of 3 out of 4 baseline systems without using the 127,000+ training examples. The capacity of the language model is essential to the success of zero-shot task transfer and increasing it improves performance in a log-linear fashion across tasks. Our largest model, GPT-2, is a 1.5B parameter Transformer that achieves state of the art results on 7 out of 8 tested language modeling datasets in a zero-shot setting but still underfits WebText. Samples from the model reflect these improvements and contain coherent paragraphs of text. These findings suggest a promising path towards building language processing systems which learn to perform tasks from their naturally occurring demonstrations.},
   langid = {english},
   keywords = {material[r]},
-  file = {C:\Users\yitao\Zotero\storage\QU8U5T24\Radford 等 - Language Models are Unsupervised Multitask Learner.pdf}
+  file = {C:\Users\yitao\Nutstore\1\_BACKUPs\Zotero\pdfs\Project\bee\2019_Radford_et.al_Language_Models_are_Unsupervised_Multitask_Learners.pdf}
 }
 
 @misc{radfordLearningTransferableVisual2021,
@@ -859,6 +1059,23 @@
   file = {C:\Users\yitao\Zotero\storage\64C8WQC9\4712.html}
 }
 
+@misc{renCrossDomainSelfsupervisedMultitask2017,
+  title = {Cross-{{Domain Self-supervised Multi-task Feature Learning}} Using {{Synthetic Imagery}}},
+  author = {Ren, Zhongzheng and Lee, Yong Jae},
+  year = {2017},
+  month = nov,
+  number = {arXiv:1711.09082},
+  eprint = {1711.09082},
+  primaryclass = {cs},
+  publisher = {{arXiv}},
+  doi = {10.48550/arXiv.1711.09082},
+  urldate = {2023-10-22},
+  abstract = {In human learning, it is common to use multiple sources of information jointly. However, most existing feature learning approaches learn from only a single task. In this paper, we propose a novel multi-task deep network to learn generalizable high-level visual representations. Since multi-task learning requires annotations for multiple properties of the same training instance, we look to synthetic images to train our network. To overcome the domain difference between real and synthetic data, we employ an unsupervised feature space domain adaptation method based on adversarial learning. Given an input synthetic RGB image, our network simultaneously predicts its surface normal, depth, and instance contour, while also minimizing the feature space domain differences between real and synthetic data. Through extensive experiments, we demonstrate that our network learns more transferable representations compared to single-task baselines. Our learned representation produces state-of-the-art transfer learning results on PASCAL VOC 2007 classification and 2012 detection.},
+  archiveprefix = {arxiv},
+  keywords = {material[r]},
+  file = {C\:\\Users\\yitao\\Nutstore\\1\\_BACKUPs\\Zotero\\pdfs\\Project\\bee\\2017_Ren_Lee_Cross-Domain_Self-supervised_Multi-task_Feature_Learning_using_Synthetic_Imagery.pdf;C\:\\Users\\yitao\\Zotero\\storage\\YW6XBT82\\1711.html}
+}
+
 @misc{ronnebergerUNetConvolutionalNetworks2015,
   title = {U-{{Net}}: {{Convolutional Networks}} for {{Biomedical Image Segmentation}}},
   shorttitle = {U-{{Net}}},
@@ -888,6 +1105,15 @@
   file = {C\:\\Users\\yitao\\Nutstore\\1\\_BACKUPs\\Zotero\\pdfs\\Project\\bee\\2021_Schmarje_et.al_A_Survey_on_Semi-,_Self-_and_Unsupervised_Learning_for_Image_Classification.pdf;C\:\\Users\\yitao\\Zotero\\storage\\WT57JZF6\\9442775.html}
 }
 
+@misc{SemantischeSegmentierung,
+  title = {{Semantische Segmentierung}},
+  urldate = {2023-10-23},
+  abstract = {Erfahren Sie, wie Sie mithilfe von Deep Learning eine semantische Segmentierung in MATLAB durchf\"uhren k\"onnen. Die Ressourcen umfassen Videos, Beispiele und Dokumentationen f\"ur semantische Segmentierungen, neuronale Faltungsnetze, Bildklassifizierung und andere Themen.},
+  howpublished = {https://de.mathworks.com/solutions/image-video-processing/semantic-segmentation.html},
+  langid = {ngerman},
+  file = {C:\Users\yitao\Zotero\storage\MPYZL7BW\semantic-segmentation.html}
+}
+
 @misc{shabanOneShotLearningSemantic2017,
   title = {One-{{Shot Learning}} for {{Semantic Segmentation}}},
   author = {Shaban, Amirreza and Bansal, Shray and Liu, Zhen and Essa, Irfan and Boots, Byron},
@@ -900,6 +1126,40 @@
   langid = {english},
   keywords = {material[r]},
   file = {C:\Users\yitao\Nutstore\1\_BACKUPs\Zotero\pdfs\Project\bee\2017_Shaban_et.al_One-Shot_Learning_for_Semantic_Segmentation.pdf}
+}
+
+@article{shiNormalizedCutsImage2000,
+  title = {Normalized Cuts and Image Segmentation},
+  author = {Shi, Jianbo and Malik, J.},
+  year = {2000},
+  month = aug,
+  journal = {IEEE Transactions on Pattern Analysis and Machine Intelligence},
+  volume = {22},
+  number = {8},
+  pages = {888--905},
+  issn = {1939-3539},
+  doi = {10.1109/34.868688},
+  urldate = {2023-10-23},
+  abstract = {We propose a novel approach for solving the perceptual grouping problem in vision. Rather than focusing on local features and their consistencies in the image data, our approach aims at extracting the global impression of an image. We treat image segmentation as a graph partitioning problem and propose a novel global criterion, the normalized cut, for segmenting the graph. The normalized cut criterion measures both the total dissimilarity between the different groups as well as the total similarity within the groups. We show that an efficient computational technique based on a generalized eigenvalue problem can be used to optimize this criterion. We applied this approach to segmenting static images, as well as motion sequences, and found the results to be very encouraging.},
+  keywords = {material[r]},
+  file = {C\:\\Users\\yitao\\Nutstore\\1\\_BACKUPs\\Zotero\\pdfs\\Project\\bee\\2000_Shi_Malik_Normalized_cuts_and_image_segmentation.pdf;C\:\\Users\\yitao\\Zotero\\storage\\VDRFAFF6\\868688.html}
+}
+
+@misc{simeoniLocalizingObjectsSelfSupervised2021,
+  title = {Localizing {{Objects}} with {{Self-Supervised Transformers}} and No {{Labels}}},
+  author = {Sim{\'e}oni, Oriane and Puy, Gilles and Vo, Huy V. and Roburin, Simon and Gidaris, Spyros and Bursuc, Andrei and P{\'e}rez, Patrick and Marlet, Renaud and Ponce, Jean},
+  year = {2021},
+  month = sep,
+  number = {arXiv:2109.14279},
+  eprint = {2109.14279},
+  primaryclass = {cs},
+  publisher = {{arXiv}},
+  doi = {10.48550/arXiv.2109.14279},
+  urldate = {2023-10-22},
+  abstract = {Localizing objects in image collections without supervision can help to avoid expensive annotation campaigns. We propose a simple approach to this problem, that leverages the activation features of a vision transformer pre-trained in a self-supervised manner. Our method, LOST, does not require any external object proposal nor any exploration of the image collection; it operates on a single image. Yet, we outperform state-of-the-art object discovery methods by up to 8 CorLoc points on PASCAL VOC 2012. We also show that training a class-agnostic detector on the discovered objects boosts results by another 7 points. Moreover, we show promising results on the unsupervised object discovery task. The code to reproduce our results can be found at https://github.com/valeoai/LOST.},
+  archiveprefix = {arxiv},
+  keywords = {SELECTED},
+  file = {C\:\\Users\\yitao\\Nutstore\\1\\_BACKUPs\\Zotero\\pdfs\\Project\\bee\\2021_Siméoni_et.al_Localizing_Objects_with_Self-Supervised_Transformers_and_no_Labels.pdf;C\:\\Users\\yitao\\Zotero\\storage\\EMNRAEN4\\2109.html}
 }
 
 @misc{strudelSegmenterTransformerSemantic2021a,
@@ -983,7 +1243,7 @@
   abstract = {Can we automatically group images into semantically meaningful clusters when ground-truth annotations are absent? The task of unsupervised image classification remains an important, and open challenge in computer vision. Several recent approaches have tried to tackle this problem in an end-to-end fashion. In this paper, we deviate from recent works, and advocate a two-step approach where feature learning and clustering are decoupled. First, a self-supervised task from representation learning is employed to obtain semantically meaningful features. Second, we use the obtained features as a prior in a learnable clustering approach. In doing so, we remove the ability for cluster learning to depend on low-level features, which is present in current end-to-end learning approaches. Experimental evaluation shows that we outperform state-of-the-art methods by large margins, in particular +26.6\% on CIFAR10, +25.0\% on CIFAR100-20 and +21.3\% on STL10 in terms of classification accuracy. Furthermore, our method is the first to perform well on a large-scale dataset for image classification. In particular, we obtain promising results on ImageNet, and outperform several semi-supervised learning methods in the low-data regime without the use of any groundtruth annotations. The code is made publicly available here.},
   archiveprefix = {arxiv},
   langid = {english},
-  file = {C:\Users\yitao\Zotero\storage\5KLD9VEZ\Van Gansbeke 等 - 2020 - SCAN Learning to Classify Images without Labels.pdf}
+  file = {C:\Users\yitao\Nutstore\1\_BACKUPs\Zotero\pdfs\Project\bee\2020_Van_Gansbeke_et.al_SCAN.pdf}
 }
 
 @misc{vangansbekeUnsupervisedSemanticSegmentation2021,
@@ -999,6 +1259,7 @@
   urldate = {2023-09-14},
   abstract = {Being able to learn dense semantic representations of images without supervision is an important problem in computer vision. However, despite its significance, this problem remains rather unexplored, with a few exceptions that considered unsupervised semantic segmentation on small-scale datasets with a narrow visual domain. In this paper, we make a first attempt to tackle the problem on datasets that have been traditionally utilized for the supervised case. To achieve this, we introduce a two-step framework that adopts a predetermined mid-level prior in a contrastive optimization objective to learn pixel embeddings. This marks a large deviation from existing works that relied on proxy tasks or end-to-end clustering. Additionally, we argue about the importance of having a prior that contains information about objects, or their parts, and discuss several possibilities to obtain such a prior in an unsupervised manner. Experimental evaluation shows that our method comes with key advantages over existing works. First, the learned pixel embeddings can be directly clustered in semantic groups using K-Means on PASCAL. Under the fully unsupervised setting, there is no precedent in solving the semantic segmentation task on such a challenging benchmark. Second, our representations can improve over strong baselines when transferred to new datasets, e.g. COCO and DAVIS. The code is available.},
   archiveprefix = {arxiv},
+  keywords = {material[r]},
   file = {C\:\\Users\\yitao\\Nutstore\\1\\_BACKUPs\\Zotero\\pdfs\\Project\\bee\\2021_Van_Gansbeke_et.al_Unsupervised_Semantic_Segmentation_by_Contrasting_Object_Mask_Proposals.pdf;C\:\\Users\\yitao\\Zotero\\storage\\BN3P78F8\\2102.html}
 }
 
@@ -1064,6 +1325,26 @@
   abstract = {We present SegFormer, a simple, efficient yet powerful semantic segmentation framework which unifies Transformers with lightweight multilayer perception (MLP) decoders. SegFormer has two appealing features: 1) SegFormer comprises a novel hierarchically structured Transformer encoder which outputs multiscale features. It does not need positional encoding, thereby avoiding the interpolation of positional codes which leads to decreased performance when the testing resolution differs from training. 2) SegFormer avoids complex decoders. The proposed MLP decoder aggregates information from different layers, and thus combining both local attention and global attention to render powerful representations. We show that this simple and lightweight design is the key to efficient segmentation on Transformers. We scale our approach up to obtain a series of models from SegFormer-B0 to SegFormer-B5, reaching significantly better performance and efficiency than previous counterparts. For example, SegFormer-B4 achieves 50.3\% mIoU on ADE20K with 64M parameters, being 5x smaller and 2.2\% better than the previous best method. Our best model, SegFormer-B5, achieves 84.0\% mIoU on Cityscapes validation set and shows excellent zero-shot robustness on Cityscapes-C. Code will be released at: github.com/NVlabs/SegFormer.},
   archiveprefix = {arxiv},
   file = {C\:\\Users\\yitao\\Nutstore\\1\\_BACKUPs\\Zotero\\pdfs\\Project\\bee\\2021_Xie_et.al_SegFormer.pdf;C\:\\Users\\yitao\\Zotero\\storage\\2LN8A5AY\\2105.html}
+}
+
+@article{yuFESNetFrequencyEnhancedSaliency2023,
+  title = {{{FESNet}}: {{Frequency-Enhanced Saliency Detection Network}} for {{Grain Pest Segmentation}}},
+  shorttitle = {{{FESNet}}},
+  author = {Yu, Junwei and Zhai, Fupin and Liu, Nan and Shen, Yi and Pan, Quan},
+  year = {2023},
+  month = feb,
+  journal = {Insects},
+  volume = {14},
+  number = {2},
+  pages = {99},
+  publisher = {{Multidisciplinary Digital Publishing Institute}},
+  issn = {2075-4450},
+  doi = {10.3390/insects14020099},
+  urldate = {2023-10-25},
+  abstract = {As insect infestation is the leading factor accounting for nutritive and economic losses in stored grains, it is important to detect the presence and number of insects for the sake of taking proper control measures. Inspired by the human visual attention mechanism, we propose a U-net-like frequency-enhanced saliency (FESNet) detection model, resulting in the pixelwise segmentation of grain pests. The frequency clues, as well as the spatial information, are leveraged to enhance the detection performance of small insects from the cluttered grain background. Firstly, we collect a dedicated dataset, GrainPest, with pixel-level annotation after analyzing the image attributes of the existing salient object detection datasets. Secondly, we design a FESNet with the discrete wavelet transformation (DWT) and the discrete cosine transformation (DCT), both involved in the traditional convolution layers. As current salient object detection models will reduce the spatial information with pooling operations in the sequence of encoding stages, a special branch of the discrete wavelet transformation (DWT) is connected to the higher stages to capture accurate spatial information for saliency detection. Then, we introduce the discrete cosine transform (DCT) into the backbone bottlenecks to enhance the channel attention with low-frequency information. Moreover, we also propose a new receptive field block (NRFB) to enlarge the receptive fields by aggregating three atrous convolution features. Finally, in the phase of decoding, we use the high-frequency information and aggregated features together to restore the saliency map. Extensive experiments and ablation studies on our dataset, GrainPest, and open dataset, Salient Objects in Clutter (SOC), demonstrate that the proposed model performs favorably against the state-of-the-art model.},
+  copyright = {http://creativecommons.org/licenses/by/3.0/},
+  langid = {english},
+  file = {C:\Users\yitao\Nutstore\1\_BACKUPs\Zotero\pdfs\Project\bee\2023_Yu_et.al_FESNet.pdf}
 }
 
 @article{zhangSGOneSimilarityGuidance2020,

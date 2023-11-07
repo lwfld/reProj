@@ -3,3 +3,7 @@ dataset/*
 beexplainable
 __pycache__
 myutils/__pycache__
+clipseg
+deep-spectral-segmentation
+deep-spectral-segmentation/*
+deep-spectral-segmentation/extract/extract.py

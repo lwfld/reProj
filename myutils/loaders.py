@@ -1,8 +1,11 @@
 from PIL import Image
 import torch
+import numpy as np
+import os
 
 METAFILE_DIR = "./dataset/metafiles/"
 IMAGE_DIR = "./dataset/WildBees/"
+GT_DIR = "./dataset/masks/gt/"
 
 # get image id and its name
 with open(METAFILE_DIR + "images.txt", "r") as f:
@@ -22,9 +25,7 @@ def get_imgNames():
 
 
 def get_imgName(id: int):
-    if id < 1 or id > len(img_names):
-        print("Wrong input for image id. Range should be within [1, " + str(len(img_names)), +"].")
-        return None
+    assert id >= 1 and id <= len(img_names), f"Wrong input for image id. Range should be within [1, {len(img_names)}]."
     return img_names[id - 1]
 
 
@@ -36,31 +37,42 @@ def get_imgID(name: str = None):
         print("Image name " + name + " not found.")
 
 
-def get_img_by_id(id: int, path=IMAGE_DIR, format="jpg"):
-    if id < 1:
-        print("Please enter a number greater than 0.")
-        return None
-    if format == "pt":
-        return torch.load(path + img_names[id - 1] + ".pt")
+def get_img(id: int = None, name: str = None, path=IMAGE_DIR, _gt=False, format="jpg", _asTensor=False):
+    """Get images by id or name
 
-    return Image.open(path + img_names[id - 1] + "." + format)
+    Params:
+        id: int, id of the image
+        name: str, name of the image
+        path: str, path of the file
+        _gt: bool, default=False: should load ground truth
+        format: str, default="jpg" format of the source image
+                ".pt" is also available
 
-
-def get_img_by_name(name: str, path=IMAGE_DIR, format="jpg"):
-    return Image.open(path + name + "." + format)
-
-
-def get_img(id: int = None, name: str = None, path=IMAGE_DIR, format="jpg"):
+    Return:
+        Image object of the image
+    """
     img_name = name
     if img_name is None and id is not None:
         img_name = get_imgName(id)
-        img_path = path + img_name + "." + format
 
-        if format == "pt":
-            return torch.load(img_path)
+    assert img_name is not None, "Please only give one of them: image id / image name"
 
-        return Image.open(img_path)
-    return None
+    if path == IMAGE_DIR and _gt is True:
+        path = GT_DIR
 
+    img_path = path + img_name + "." + format
 
-# def generatePredPaths():
+    # check if file exists
+    assert os.path.exists(img_path), "File doesn't exist!"
+
+    # load tensors
+    if format == "pt" or format == "pth":
+        return torch.load(img_path)
+
+    if _gt:
+        gt = Image.open(img_path).convert("1")
+        if _asTensor:
+            return torch.from_numpy(np.array(gt)).long()
+        return gt
+
+    return Image.open(img_path)

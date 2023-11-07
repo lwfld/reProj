@@ -7,7 +7,7 @@ import pandas as pd
 from tqdm import tqdm
 
 from myutils import CLIPSeg, DSS
-from myutils.loaders import get_img_by_id, get_img_by_name, get_img, get_imgName, get_imgNames
+from myutils.loaders import get_img, get_imgName, get_imgNames
 from myutils.processors import toBinary, toGreyscale
 
 # Load ground truth
@@ -60,11 +60,14 @@ def getBestIOU(pred=None, gt=None, gs_mode=1, model="DSS", pred_id=0, id: int = 
         print("Wrong input. At least give pred+gt or id or name")
         return
 
+    if gt is not None:
+        gt = torch.from_numpy(np.array(gt.convert("1"))).long()
+
     # Can get gt and predictions based on img_name, but if gt/pred is provided, prefer them
     if img_name is not None:
         if gt is None:
             # Load from gt's path
-            gt = torch.from_numpy(np.array(get_img_by_name(img_name, GT_PATH).convert("1"))).long()
+            gt = torch.from_numpy(np.array(get_img(name=img_name, _gt=True).convert("1"))).long()
         if pred is None:
             # Load from prediction's path
             pred_path = PREDS_PATH + model + "/" + str(pred_id) + "/" + img_name + ".pt"
@@ -123,7 +126,7 @@ def getBestIOUfromPreds(preds: List = None, gt=None, model="DSS", id: int = None
     if img_name is not None:
         if gt is None:
             # Load from gt's path
-            gt = torch.from_numpy(np.array(get_img_by_name(img_name, GT_PATH).convert("1"))).long()
+            gt = torch.from_numpy(np.array(get_img(name=img_name, _gt=True).convert("1"))).long()
         if preds is None:
             preds_tmp = []
             # Load from prediction's path
@@ -146,105 +149,344 @@ def getBestIOUfromPreds(preds: List = None, gt=None, model="DSS", id: int = None
     # return np.array([max_pred_idx, best_ious_thr[max_pred_idx], best_ious_val[max_pred_idx]])
 
 
-def getMeanIOU(model: int = 1, gs_mode=1, bi_mode=1, t=0.5, pred_idx=0, prob_thr=0):
-    """Get best mean IOU threshold and its score
+def getBestPred_(preds, gt, metric_=None):
+    """Get best score and its idx from a set of prediction
+       The input preds should already be its corresponding format(binary or greyscale)
 
     Params:
-        model: which model to be scored(1 | 2)
-            1: CLIPSEG
-            2. DSS
-        prob_thr: threshold to classify if the score should be included.
+        preds:
+        gt:
+        metric: which metric to be used(1 | 2)
+            1: IOU
+            2. AP
 
     Return:
-        miou score
+        score, idx
     """
-    if model == 1:
-        segment = CLIPSeg.segment
-    elif model == 2:
-        segment = DSS.segment
-    else:
-        print("Wrong model number!")
-        return None
+    assert metric_ is not None, "Please give a metric"
+
+    scores = [metric_(pred, gt).item() * 100 for pred in preds]
+    return np.max(scores), np.argmax(scores)
+
+
+def getIOUPart(segment_=None, gs_mode=1, bi_mode=1, t=0.5, pred_idx=None, range_=None):
+    """Get Mean IOU score and its running time
+
+    Params:
+        segment_: model's segment function
+        gs_mode, default=1: greyscale mode
+        bi_mode, default=1: binarilization mode
+        t: threshold when bi_mode==1
+        pred_idx: choose exactly one pred from predictions
+
+    Return:
+        miou score, duration
+    """
+    assert segment_ is not None, "Please give the segment function"
+
+    if range_ is None:
+        range_ = len(img_names)
+
+    ious = []
+    # calculate iou
+    for i in tqdm(range(range_), desc="Calculating Mean IOU...", ncols=100):
+        source = get_img(i + 1)
+        gt = get_img(i + 1, _gt=True, _asTensor=True)
+        # get predictions
+        preds = segment_(source)
+
+        # Specifically want one pred
+        if pred_idx is not None:
+            preds = [preds[pred_idx]]
+
+        # convert to grey scale values
+        preds_gs = [toGreyscale(pred, gs_mode) for pred in preds]
+
+        metric_ = BinaryJaccardIndex()
+
+        # Otsu's method
+        if bi_mode == 2:
+            preds_bi = [toBinary(pred_gs, mode=2)[1] for pred_gs in preds_gs]
+        elif bi_mode == 1:
+            preds_bi = [toBinary(pred_gs, t, bi_mode) for pred_gs in preds_gs]
+
+        best_iou, idx = getBestPred_(preds_bi, gt, metric_)
+        ious.append(best_iou)
+
+    return ious
+
+
+def getAPPart(segment_=None, gs_mode=1, pred_idx=None, range_=None, t=None):
+    """Get AP score based on prediction and ground truth
+    input can either be single or a list
+
+    Params:
+        segment_:
+        gs_mode:
+        pred_idx:
+        range_:
+        t: confidence threshold
+
+    Return:
+        AP score, if input is a list, also returns the index
+    """
+    assert segment_ is not None, "Please give the segment function"
+
+    if range_ is None:
+        range_ = len(img_names)
+
+    aps = []
+    # calculate iou
+    for i in tqdm(range(range_), desc="Calculating Mean AP...", ncols=100):
+        source = get_img(i + 1)
+        gt = get_img(i + 1, _gt=True, _asTensor=True)
+        # get predictions
+        preds = segment_(source)
+
+        # Specifically want one pred
+        if pred_idx is not None:
+            preds = [preds[pred_idx]]
+
+        # convert to grey scale values
+        preds_gs = [toGreyscale(pred, gs_mode) for pred in preds]
+
+        metric_ = BinaryAveragePrecision(thresholds=t)
+
+        best_ap, idx = getBestPred_(preds_gs, gt, metric_)
+        aps.append(best_ap)
+
+    return aps
+
+
+def getMeanIOU(segment_=None, gs_mode=1, bi_mode=1, t=0.5, pred_idx=None, range_=None):
+    """Get Mean IOU score and its running time
+
+    Params:
+        segment_: model's segment function
+        gs_mode, default=1: greyscale mode
+        bi_mode, default=1: binarilization mode
+        t: threshold when bi_mode==1
+        pred_idx: choose exactly one pred from predictions
+
+    Return:
+        miou score, duration
+    """
+    assert segment_ is not None, "Please give the segment function"
+
+    if range_ is None:
+        range_ = len(img_names)
 
     ious = []
     start_time = time.time()
     # calculate iou
-    for i in tqdm(range(len(img_names)), desc="Calculating Mean IOU...", ncols=100):
-        img_name = get_imgName(i + 1)
-        source = get_img(id=i + 1)
-        gt = torch.from_numpy(np.array(get_img_by_name(img_name, GT_PATH).convert("1"))).long()
-        pred = segment(source)[pred_idx]
-        pred_gs = toGreyscale(pred, gs_mode)
-        if bi_mode == 1:
-            pred_bi = toBinary(pred_gs, t=t, mode=bi_mode)
-        elif bi_mode == 2:
-            pred_bi = toBinary(pred_gs, t=t, mode=bi_mode)[1]
-        iou = metric_biJ(pred_bi, gt).item() * 100
-        if iou >= prob_thr:
-            ious.append(iou)
-        else:
-            ious.append(0.0)
+    for i in tqdm(range(range_), desc="Calculating Mean IOU...", ncols=100):
+        source = get_img(i + 1)
+        gt = get_img(i + 1, _gt=True, _asTensor=True)
+        # get predictions
+        preds = segment_(source)
+
+        # Specifically want one pred
+        if pred_idx is not None:
+            preds = [preds[pred_idx]]
+
+        # convert to grey scale values
+        preds_gs = [toGreyscale(pred, gs_mode) for pred in preds]
+
+        metric_ = BinaryJaccardIndex()
+
+        # Otsu's method
+        if bi_mode == 2:
+            preds_bi = [toBinary(pred_gs, mode=2)[1] for pred_gs in preds_gs]
+        elif bi_mode == 1:
+            preds_bi = [toBinary(pred_gs, t, 1) for pred_gs in preds_gs]
+
+        best_iou, idx = getBestPred_(preds_bi, gt, metric_)
+        ious.append(best_iou)
+
     end_time = time.time()
     miou = np.mean(ious)
     duration = end_time - start_time
-    print(f"MIOU={miou:.2f}%, takes {duration:.2f}s in total, {(duration/len(img_names)):.2f}s per image.")
+    print(f"MIOU={miou:.2f}%, takes {duration:.2f}s in total, {(duration/range_):.2f}s per image.")
     return miou, duration
 
 
-def getBestMeanIOU(model: int = 1, gs_mode=1, bi_mode=1, pred_idx=0, prob_thr=0, prompts=None, numEigs=5):
-    if model == 1:
-        _, segment = CLIPSeg.get_segment(prompts)
-    elif model == 2:
-        _, segment = DSS.get_segment(numEigs)
-    else:
-        print("Wrong model number!")
-        return None
+def getBestMeanIOU_ng(segment_=None, gs_mode=1, pred_idx=None, range_=None):
+    # getBestMeanIOU(non global threshold version)
+    assert segment_ is not None, "Please give the segment function"
+
+    if range_ is None:
+        range_ = len(img_names)
+
+    ious = []
+
+    start_time = time.time()
+    # calculate iou
+    for i in tqdm(range(range_), desc="Calculating Mean IOU...", ncols=100):
+        source = get_img(i + 1)
+        gt = get_img(i + 1, _gt=True, _asTensor=True)
+        # get predictions
+        preds = segment_(source)
+
+        # Specifically want one pred
+        if pred_idx is not None:
+            preds = [preds[pred_idx]]
+
+        # convert to grey scale values
+        preds_gs = [toGreyscale(pred, gs_mode) for pred in preds]
+
+        metric_ = BinaryJaccardIndex()
+
+        # Get Binary Prediction Lists
+        preds_bi = [[toBinary(pred_gs, t) for pred_gs in preds_gs] for t in threshold_values]
+
+        ious_t = [getBestPred_(pred_bi, gt, metric_)[0] for pred_bi in preds_bi]
+
+        ious.append(np.max(ious_t))
+
+    end_time = time.time()
+
+    miou = np.mean(ious)
+    duration = end_time - start_time
+
+    print(f"MIOU={miou:.2f}%, takes {duration:.2f}s in total, {(duration/range_):.2f}s per image.")
+    return miou, duration
+
+
+def getBestMeanIOU(segment_=None, gs_mode=1, pred_idx=None, range_=None):
+    assert segment_ is not None, "Please give the segment function"
+
+    if range_ is None:
+        range_ = len(img_names)
 
     ious = [[] for _ in range(len(threshold_values))]
-    mious = []
 
+    start_time = time.time()
     # calculate iou
-    for i in tqdm(range(len(img_names)), desc="Calculating Mean IOU...", ncols=100):
-        img_name = get_imgName(i + 1)
-        source = get_img(id=i + 1)
-        gt = torch.from_numpy(np.array(get_img_by_name(img_name, GT_PATH).convert("1"))).long()
-        pred = segment(source)[pred_idx]
-        pred_gs = toGreyscale(pred, gs_mode)
+    for i in tqdm(range(range_), desc="Calculating Mean IOU...", ncols=100):
+        source = get_img(i + 1)
+        gt = get_img(i + 1, _gt=True, _asTensor=True)
+        # get predictions
+        preds = segment_(source)
+
+        # Specifically want one pred
+        if pred_idx is not None:
+            preds = [preds[pred_idx]]
+
+        # convert to grey scale values
+        preds_gs = [toGreyscale(pred, gs_mode) for pred in preds]
+
+        metric_ = BinaryJaccardIndex()
+
         # Get Binary Prediction Lists
-        if bi_mode == 1:
-            preds_bi = [toBinary(pred_gs, t=threshold_values[j], mode=bi_mode) for j in range(len(threshold_values))]
-        elif bi_mode == 2:
-            preds_bi = [toBinary(pred_gs, t=threshold_values[j], mode=bi_mode)[1] for j in range(len(threshold_values))]
+        preds_bi = [[toBinary(pred_gs, t) for pred_gs in preds_gs] for t in threshold_values]
+
         for j in range(len(threshold_values)):
-            iou = metric_biJ(preds_bi[j], gt).item()
-            iou = iou * 100 if iou > prob_thr * 100 else 0.0
-            ious[j].append(iou)
+            best_iou, idx = getBestPred_(preds_bi[j], gt, metric_)
+            ious[j].append(best_iou)
+
+    end_time = time.time()
 
     mious = [np.mean(ious[i]) for i in range(len(threshold_values))]
+    duration = end_time - start_time
 
-    return threshold_values[np.argmax(mious)], np.max(mious)
+    # results
+    best_threshold = threshold_values[np.argmax(mious)]
+    best_miou = np.max(mious)
+
+    print(
+        f"MIOU={best_miou:.2f}% at t={best_threshold}, takes {duration:.2f}s in total, {(duration/range_):.2f}s per image."
+    )
+    return best_threshold, best_miou, duration
+
+
+def getMeanAP(segment_=None, gs_mode=1, pred_idx=None, range_=None, t=None):
+    """Get AP score based on prediction and ground truth
+    input can either be single or a list
+
+    Params:
+        segment_:
+        gs_mode:
+        pred_idx:
+        range_:
+        t: confidence threshold
+
+    Return:
+        AP score, if input is a list, also returns the index
+    """
+    assert segment_ is not None, "Please give the segment function"
+
+    if range_ is None:
+        range_ = len(img_names)
+
+    aps = []
+    start_time = time.time()
+    # calculate iou
+    for i in tqdm(range(range_), desc="Calculating Mean AP...", ncols=100):
+        source = get_img(i + 1)
+        gt = get_img(i + 1, _gt=True, _asTensor=True)
+        # get predictions
+        preds = segment_(source)
+
+        # Specifically want one pred
+        if pred_idx is not None:
+            preds = [preds[pred_idx]]
+
+        # convert to grey scale values
+        preds_gs = [toGreyscale(pred, gs_mode) for pred in preds]
+
+        metric_ = BinaryAveragePrecision(thresholds=t)
+
+        best_iou, idx = getBestPred_(preds_gs, gt, metric_)
+        aps.append(best_iou)
+
+    end_time = time.time()
+    map = np.mean(aps)
+    duration = end_time - start_time
+    print(f"mAP={map:.2f}%, takes {duration:.2f}s in total, {(duration/range_):.2f}s per image.")
+    return map, duration
 
 
 def getBestMeanIOUfromPreds(model: int = 1, gs_mode=1, bi_mode=1, prob_thr=0, prompts=None, numEigs=5):
     if model == 1:
-        preds_length, _ = CLIPSeg.get_segment(prompts)
+        preds_length, segment = CLIPSeg.get_segment(prompts)
     elif model == 2:
-        preds_length, _ = DSS.get_segment(numEigs)
+        preds_length, segment = DSS.get_segment(numEigs)
     else:
         print("Wrong model number!")
         return None
 
-    best_miou_vals = []
-    best_miou_thrs = []
+    ious = [[[] for _ in range(len(threshold_values))] for _ in range(preds_length)]
+    mious = [[] for _ in range(preds_length)]
 
-    for k in range(preds_length):
-        best_miou_thr, best_miou_val = getBestMeanIOU(model, gs_mode, bi_mode, k, prob_thr, prompts, numEigs)
-        best_miou_vals.append(best_miou_val)
-        best_miou_thrs.append(best_miou_thr)
+    for i in tqdm(range(len(img_names)), desc="Calculating Mean IOU...", ncols=100):
+        img_name = get_imgName(i + 1)
+        source = get_img(id=i + 1)
+        gt = torch.from_numpy(np.array(get_img(name=img_name, _gt=True).convert("1"))).long()
+        preds = segment(source)
+        pred_gss = [toGreyscale(preds[j], gs_mode) for j in range(preds_length)]
+        # Get Binary Prediction Lists
+        if bi_mode == 1:
+            preds_bi = [
+                [toBinary(pred_gss[k], t=threshold_values[j], mode=bi_mode) for j in range(len(threshold_values))]
+                for k in range(preds_length)
+            ]
+        elif bi_mode == 2:
+            preds_bi = [
+                [toBinary(pred_gss[k], t=threshold_values[j], mode=bi_mode)[1] for j in range(len(threshold_values))]
+                for k in range(preds_length)
+            ]
+        for j in range(len(threshold_values)):
+            for k in range(preds_length):
+                iou = metric_biJ(preds_bi[k][j], gt).item()
+                iou = iou * 100 if iou > prob_thr * 100 else 0.0
+                ious[k][j].append(iou)
 
-    return np.argmax(best_miou_vals), np.array(
-        [best_miou_thrs[np.argmax(best_miou_vals)], best_miou_vals[np.argmax(best_miou_vals)]]
-    )
+    mious = [[np.mean(ious[k][i]) for i in range(len(threshold_values))] for k in range(preds_length)]
+    best_miou_vals = [np.max(mious[k]) for k in range(preds_length)]
+    best_pred_idx = np.argmax(best_miou_vals)
+    best_ious = mious[best_pred_idx]
+
+    return best_pred_idx, np.array([threshold_values[np.argmax(best_ious)], np.max(best_ious)])
 
 
 def saveCSV(file_name, t=0.5, bi_mode=1):
@@ -262,3 +504,48 @@ def saveCSV(file_name, t=0.5, bi_mode=1):
             new_df = pd.DataFrame(new_data)
             df = pd.concat([df, new_df], ignore_index=True)
     df.to_csv(file_path, index=False)
+
+
+# def getMeanIOU(model: int = 1, gs_mode=1, bi_mode=1, t=0.5, pred_idx=0, prob_thr=0):
+#     """Get best mean IOU threshold and its score
+
+#     Params:
+#         model: which model to be scored(1 | 2)
+#             1: CLIPSEG
+#             2. DSS
+#         prob_thr: threshold to classify if the score should be included.
+
+#     Return:
+#         miou score
+#     """
+#     if model == 1:
+#         segment = CLIPSeg.segment
+#     elif model == 2:
+#         segment = DSS.segment
+#     else:
+#         print("Wrong model number!")
+#         return None
+
+#     ious = []
+#     start_time = time.time()
+#     # calculate iou
+#     for i in tqdm(range(len(img_names)), desc="Calculating Mean IOU...", ncols=100):
+#         img_name = get_imgName(i + 1)
+#         source = get_img(id=i + 1)
+#         gt = torch.from_numpy(np.array(get_img(name=img_name, _gt=True).convert("1"))).long()
+#         pred = segment(source)[pred_idx]
+#         pred_gs = toGreyscale(pred, gs_mode)
+#         if bi_mode == 1:
+#             pred_bi = toBinary(pred_gs, t=t, mode=bi_mode)
+#         elif bi_mode == 2:
+#             pred_bi = toBinary(pred_gs, t=t, mode=bi_mode)[1]
+#         iou = metric_biJ(pred_bi, gt).item() * 100
+#         if iou >= prob_thr:
+#             ious.append(iou)
+#         else:
+#             ious.append(0.0)
+#     end_time = time.time()
+#     miou = np.mean(ious)
+#     duration = end_time - start_time
+#     print(f"MIOU={miou:.2f}%, takes {duration:.2f}s in total, {(duration/len(img_names)):.2f}s per image.")
+#     return miou, duration

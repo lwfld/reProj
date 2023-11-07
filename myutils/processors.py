@@ -30,6 +30,7 @@ def toGreyscale(pred, method=1, _gs=False):
         method: int, should normalize, 1|2
             1: default, minmax normalization
             2: sigmoid
+            3: direct_pass, no modification
         _gs: bool dafault = False, should the scaled value map to (0-255) greyscale values
              if set to False, remain(0-1)
 
@@ -47,6 +48,8 @@ def toGreyscale(pred, method=1, _gs=False):
     # use sigmoid to map ~
     elif method == 2:
         pred = torch.sigmoid(pred)
+    elif method == 3:
+        return pred
     else:
         print("wrong mode.")
         return pred
@@ -110,24 +113,3 @@ def savePic(origin: np.array, output_dir: str, file_name: str, _override: bool =
     if not os.path.isfile(output_path) or _override:
         img = Image.fromarray(origin.astype(np.uint8), mode="L")
         img.save(output_path)
-
-
-# def savePic(origin: np.array, output_dir: str, file_name: str, _override: bool = False):
-#     """Convert binary prediction as picture(single channel) in format of png
-
-#     Params:
-#         origin: prediction in array format
-#         output_dir: str, output directory
-#         file_name: str, output file name
-#         _override: bool, should override if file existed, default=False
-#     """
-#     output_path = output_dir + file_name
-
-#     if not os.path.isfile(output_path) or _override:
-#         target = Image.new("L", (origin.shape[1], origin.shape[0]))
-#         pixels = target.load()
-#         for i in range(target.size[0]):
-#             for j in range(target.size[1]):
-#                 pixels[i, j] = origin[j][i].item()
-
-#         target.save(output_path)

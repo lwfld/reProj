@@ -52,20 +52,16 @@ def extract_features(
         def hook_fn_forward_qkv(module, input, output):
             feat_out["qkv"] = output
 
-        model._modules["blocks"][which_block]._modules["attn"]._modules[
-            "qkv"
-        ].register_forward_hook(hook_fn_forward_qkv)
+        model._modules["blocks"][which_block]._modules["attn"]._modules["qkv"].register_forward_hook(
+            hook_fn_forward_qkv
+        )
     else:
         raise ValueError(model_name)
 
     # Dataset
     filenames = Path(images_list).read_text().splitlines()
-    dataset = utils.ImagesDataset(
-        filenames=filenames, images_root=images_root, transform=val_transform
-    )
-    dataloader = torch.utils.data.DataLoader(
-        dataset, batch_size=batch_size, num_workers=8
-    )
+    dataset = utils.ImagesDataset(filenames=filenames, images_root=images_root, transform=val_transform)
+    dataloader = torch.utils.data.DataLoader(dataset, batch_size=batch_size, num_workers=8)
     print(f"Dataset size: {len(dataset)=}")
     print(f"Dataloader size: {len(dataloader)=}")
 
@@ -101,11 +97,7 @@ def extract_features(
             # accelerator.unwrap_model(model).get_intermediate_layers(images)[0].squeeze(0)
             model.get_intermediate_layers(images)[0].squeeze(0)
             # output_dict['out'] = out
-            output_qkv = (
-                feat_out["qkv"]
-                .reshape(B, T, 3, num_heads, -1 // num_heads)
-                .permute(2, 0, 3, 1, 4)
-            )
+            output_qkv = feat_out["qkv"].reshape(B, T, 3, num_heads, -1 // num_heads).permute(2, 0, 3, 1, 4)
             # output_dict['q'] = output_qkv[0].transpose(1, 2).reshape(B, T, -1)[:, 1:, :]
             output_dict["k"] = output_qkv[1].transpose(1, 2).reshape(B, T, -1)[:, 1:, :]
             # output_dict['v'] = output_qkv[2].transpose(1, 2).reshape(B, T, -1)[:, 1:, :]
@@ -119,10 +111,7 @@ def extract_features(
         output_dict["model_name"] = model_name
         output_dict["patch_size"] = patch_size
         output_dict["shape"] = (B, C, H, W)
-        output_dict = {
-            k: (v.detach().cpu() if torch.is_tensor(v) else v)
-            for k, v in output_dict.items()
-        }
+        output_dict = {k: (v.detach().cpu() if torch.is_tensor(v) else v) for k, v in output_dict.items()}
 
         # Save
         accelerator.save(output_dict, str(output_file))
@@ -214,9 +203,7 @@ def _extract_eig(
         W_feat = feats @ feats.T
         if threshold_at_zero:
             W_feat = W_feat * (W_feat > 0)
-        W_feat = (
-            W_feat / W_feat.max()
-        )  # NOTE: If features are normalized, this naturally does nothing
+        W_feat = W_feat / W_feat.max()  # NOTE: If features are normalized, this naturally does nothing
         W_feat = W_feat.cpu().numpy()
 
         ### Color affinities
@@ -224,9 +211,7 @@ def _extract_eig(
         if image_color_lambda > 0:
             # Load image
             image_file = str(Path(images_root) / f"{image_id}.jpg")
-            image_lr = Image.open(image_file).resize(
-                (W_pad_lr, H_pad_lr), Image.BILINEAR
-            )
+            image_lr = Image.open(image_file).resize((W_pad_lr, H_pad_lr), Image.BILINEAR)
             image_lr = np.array(image_lr) / 255.0
 
             # Color affinities (of type scipy.sparse.csr_matrix)
@@ -244,25 +229,17 @@ def _extract_eig(
 
         # Combine
         W_comb = W_feat + W_color * image_color_lambda  # combination
-        D_comb = np.array(
-            utils.get_diagonal(W_comb).todense()
-        )  # is dense or sparse faster? not sure, should check
+        D_comb = np.array(utils.get_diagonal(W_comb).todense())  # is dense or sparse faster? not sure, should check
 
         # Extract eigenvectors
         if lapnorm:
             try:
-                eigenvalues, eigenvectors = eigsh(
-                    D_comb - W_comb, k=K, sigma=0, which="LM", M=D_comb
-                )
+                eigenvalues, eigenvectors = eigsh(D_comb - W_comb, k=K, sigma=0, which="LM", M=D_comb)
             except:
-                eigenvalues, eigenvectors = eigsh(
-                    D_comb - W_comb, k=K, which="SM", M=D_comb
-                )
+                eigenvalues, eigenvectors = eigsh(D_comb - W_comb, k=K, which="SM", M=D_comb)
         else:
             try:
-                eigenvalues, eigenvectors = eigsh(
-                    D_comb - W_comb, k=K, sigma=0, which="LM"
-                )
+                eigenvalues, eigenvectors = eigsh(D_comb - W_comb, k=K, sigma=0, which="LM")
             except:
                 eigenvalues, eigenvectors = eigsh(D_comb - W_comb, k=K, which="SM")
         eigenvalues, eigenvectors = (
@@ -272,10 +249,10 @@ def _extract_eig(
 
     # Sign ambiguity
     for k in range(eigenvectors.shape[0]):
-        if (
-            0.5 < torch.mean((eigenvectors[k] > 0).float()).item() < 1.0
-        ):  # reverse segment
+        if 0.5 < torch.mean((eigenvectors[k] > 0).float()).item() < 1.0:  # reverse segment
             eigenvectors[k] = 0 - eigenvectors[k]
+
+    # print(eigenvectors.shape)
 
     # Save dict
     output_dict = {"eigenvalues": eigenvalues, "eigenvectors": eigenvectors}
@@ -352,15 +329,14 @@ def _extract_multi_region_segmentations(
 
     # Sizes
     B, C, H, W, P, H_patch, W_patch, H_pad, W_pad = utils.get_image_sizes(data_dict)
+    print(f"B={B}, C={C}, H={H}, W={W}, P={P}, H_patch={H_patch}, W_patch={W_patch}, H_pad={H_pad}, W_pad={W_pad}")
 
     # If adaptive, we use the gaps between eigenvalues to determine the number of
     # segments per image. If not, we use non_adaptive_num_segments to get a fixed
     # number of segments per image.
     if adaptive:
         indices_by_gap = np.argsort(np.diff(data_dict["eigenvalues"].numpy()))[::-1]
-        index_largest_gap = indices_by_gap[indices_by_gap != 0][
-            0
-        ]  # remove zero and take the biggest
+        index_largest_gap = indices_by_gap[indices_by_gap != 0][0]  # remove zero and take the biggest
         n_clusters = index_largest_gap + 1
         # print(f'Number of clusters: {n_clusters}')
     else:
@@ -381,9 +357,7 @@ def _extract_multi_region_segmentations(
         clusters = kmeans.fit_predict(eigenvectors.T)
 
     # Reshape
-    if (
-        clusters.size == H_patch * W_patch
-    ):  # TODO: better solution might be to pass in patch index
+    if clusters.size == H_patch * W_patch:  # TODO: better solution might be to pass in patch index
         segmap = clusters.reshape(H_patch, W_patch)
     elif clusters.size == H_patch * W_patch * 4:
         segmap = clusters.reshape(H_patch * 2, W_patch * 2)
@@ -459,9 +433,7 @@ def _extract_single_region_segmentations(
     B, C, H, W, P, H_patch, W_patch, H_pad, W_pad = utils.get_image_sizes(data_dict)
 
     # Eigenvector
-    eigenvector = data_dict["eigenvectors"][
-        1
-    ].numpy()  # take smallest non-zero eigenvector
+    eigenvector = data_dict["eigenvectors"][1].numpy()  # take smallest non-zero eigenvector
     segmap = (eigenvector > threshold).reshape(H_patch, W_patch)
 
     # Save dict
@@ -483,9 +455,7 @@ def extract_single_region_segmentations(
         --output_dir "./data/VOC2012/single_region_segmentation/patches" \
     """
     utils.make_output_dir(output_dir)
-    fn = partial(
-        _extract_single_region_segmentations, threshold=threshold, output_dir=output_dir
-    )
+    fn = partial(_extract_single_region_segmentations, threshold=threshold, output_dir=output_dir)
     inputs = utils.get_paired_input_files(features_dir, eigs_dir)
     utils.parallel_process(inputs, fn, multiprocessing)
 
@@ -505,9 +475,7 @@ def _extract_bbox(
     image_id = data_dict["id"]
 
     # Sizes
-    B, C, H, W, P, H_patch, W_patch, H_pad, W_pad = utils.get_image_sizes(
-        data_dict, downsample_factor
-    )
+    B, C, H, W, P, H_patch, W_patch, H_pad, W_pad = utils.get_image_sizes(data_dict, downsample_factor)
 
     # Get bounding boxes
     outputs = {
@@ -518,17 +486,11 @@ def _extract_bbox(
         "format": "(xmin, ymin, xmax, ymax)",
     }
     for segment_index in sorted(np.unique(segmap).tolist()):
-        if (not skip_bg_index) or (
-            segment_index > 0
-        ):  # skip 0, because 0 is the background
+        if (not skip_bg_index) or (segment_index > 0):  # skip 0, because 0 is the background
             # Erode and dilate mask
             binary_mask = segmap == segment_index
-            binary_mask = utils.erode_or_dilate_mask(
-                binary_mask, r=num_erode, erode=True
-            )
-            binary_mask = utils.erode_or_dilate_mask(
-                binary_mask, r=num_dilate, erode=False
-            )
+            binary_mask = utils.erode_or_dilate_mask(binary_mask, r=num_erode, erode=True)
+            binary_mask = utils.erode_or_dilate_mask(binary_mask, r=num_dilate, erode=False)
 
             # Find box
             mask = np.where(binary_mask == 1)
@@ -602,9 +564,7 @@ def extract_bbox_features(
     # Load bounding boxes
     bbox_list = torch.load(bbox_file)
     total_num_boxes = sum(len(d["bboxes"]) for d in bbox_list)
-    print(
-        f"Loaded bounding box list. There are {total_num_boxes} total bounding boxes."
-    )
+    print(f"Loaded bounding box list. There are {total_num_boxes} total bounding boxes.")
 
     # Models
     model_name_lower = model_name.lower()
@@ -650,18 +610,12 @@ def extract_bbox_clusters(
     # Load bounding boxes
     bbox_list = torch.load(bbox_features_file)
     total_num_boxes = sum(len(d["bboxes"]) for d in bbox_list)
-    print(
-        f"Loaded bounding box list. There are {total_num_boxes} total bounding boxes with features."
-    )
+    print(f"Loaded bounding box list. There are {total_num_boxes} total bounding boxes with features.")
 
     # Loop over boxes and stack features with PyTorch, because Numpy is too slow
     print(f"Stacking and normalizing features")
-    all_features = torch.cat(
-        [bbox_dict["features"] for bbox_dict in bbox_list], dim=0
-    )  # (numBbox, D)
-    all_features = all_features / torch.norm(
-        all_features, dim=-1, keepdim=True
-    )  # (numBbox, D)f
+    all_features = torch.cat([bbox_dict["features"] for bbox_dict in bbox_list], dim=0)  # (numBbox, D)
+    all_features = all_features / torch.norm(all_features, dim=-1, keepdim=True)  # (numBbox, D)f
     all_features = all_features.numpy()
 
     # Cluster: PCA
@@ -672,9 +626,7 @@ def extract_bbox_clusters(
 
     # Cluster: K-Means
     print(f"Computing K-Means clustering with {num_clusters} clusters")
-    kmeans = MiniBatchKMeans(
-        n_clusters=num_clusters, batch_size=4096, max_iter=5000, random_state=seed
-    )
+    kmeans = MiniBatchKMeans(n_clusters=num_clusters, batch_size=4096, max_iter=5000, random_state=seed)
     clusters = kmeans.fit_predict(all_features)
 
     # Print
@@ -686,9 +638,7 @@ def extract_bbox_clusters(
     idx = 0
     for bbox_dict in bbox_list:
         num_bboxes = len(bbox_dict["bboxes"])
-        del bbox_dict[
-            "features"
-        ]  # bbox_dict['features'] = bbox_dict['features'].squeeze()
+        del bbox_dict["features"]  # bbox_dict['features'] = bbox_dict['features'].squeeze()
         bbox_dict["clusters"] = clusters[idx : idx + num_bboxes]
         idx = idx + num_bboxes
 
@@ -713,9 +663,7 @@ def extract_semantic_segmentations(
     # Load bounding boxes
     bbox_list = torch.load(bbox_clusters_file)
     total_num_boxes = sum(len(d["bboxes"]) for d in bbox_list)
-    print(
-        f"Loaded bounding box list. There are {total_num_boxes} total bounding boxes with features and clusters."
-    )
+    print(f"Loaded bounding box list. There are {total_num_boxes} total bounding boxes with features and clusters.")
 
     # Output
     utils.make_output_dir(output_dir)
@@ -736,9 +684,7 @@ def extract_semantic_segmentations(
             import pdb
 
             pdb.set_trace()
-        semantic_map = dict(
-            zip(bbox_dict["segment_indices"], bbox_dict["clusters"].tolist())
-        )
+        semantic_map = dict(zip(bbox_dict["segment_indices"], bbox_dict["clusters"].tolist()))
         assert 0 not in semantic_map, semantic_map
         semantic_map[0] = 0  # background region remains zero
         # Perform mapping
@@ -779,12 +725,8 @@ def _extract_crf_segmentations(
     H_pad, W_pad = H_patch * P, W_patch * P
 
     # Resize and expand
-    segmap_upscaled = cv2.resize(
-        segmap, dsize=(W_pad, H_pad), interpolation=cv2.INTER_NEAREST
-    )  # (H_pad, W_pad)
-    segmap_orig_res = cv2.resize(
-        segmap, dsize=(W, H), interpolation=cv2.INTER_NEAREST
-    )  # (H, W)
+    segmap_upscaled = cv2.resize(segmap, dsize=(W_pad, H_pad), interpolation=cv2.INTER_NEAREST)  # (H_pad, W_pad)
+    segmap_orig_res = cv2.resize(segmap, dsize=(W, H), interpolation=cv2.INTER_NEAREST)  # (H, W)
     segmap_orig_res[
         :H_pad, :W_pad
     ] = segmap_upscaled  # replace with the correctly upscaled version, just in case they are different
@@ -796,12 +738,8 @@ def _extract_crf_segmentations(
     # CRF
     import denseCRF  # make sure you've installed SimpleCRF
 
-    unary_potentials = F.one_hot(
-        torch.from_numpy(segmap_orig_res).long(), num_classes=num_classes
-    )
-    segmap_crf = denseCRF.densecrf(
-        image, unary_potentials, crf_params
-    )  # (H_pad, W_pad)
+    unary_potentials = F.one_hot(torch.from_numpy(segmap_orig_res).long(), num_classes=num_classes)
+    segmap_crf = denseCRF.densecrf(image, unary_potentials, crf_params)  # (H_pad, W_pad)
 
     # Save
     Image.fromarray(segmap_crf).convert("L").save(output_file)
@@ -836,10 +774,7 @@ def extract_crf_segmentations(
     try:
         import denseCRF
     except:
-        raise ImportError(
-            "Please install SimpleCRF to compute CRF segmentations:\n"
-            "pip3 install SimpleCRF"
-        )
+        raise ImportError("Please install SimpleCRF to compute CRF segmentations:\n" "pip3 install SimpleCRF")
 
     utils.make_output_dir(output_dir)
     fn = partial(
@@ -917,9 +852,7 @@ def vis_segmentations(
             segmap[segmap == 255] = 1
 
         # Resize
-        segmap_fullres = cv2.resize(
-            segmap, dsize=image.shape[:2][::-1], interpolation=cv2.INTER_NEAREST
-        )
+        segmap_fullres = cv2.resize(segmap, dsize=image.shape[:2][::-1], interpolation=cv2.INTER_NEAREST)
 
         # Only view images with a specific class
         if which_index not in np.unique(segmap):
@@ -933,9 +866,7 @@ def vis_segmentations(
         bboxes = None
         if bbox_file is not None:
             bboxes = torch.tensor(bboxes_list[i]["bboxes_original_resolution"])
-            assert (
-                bboxes_list[i]["id"] == image_id
-            ), f"{bboxes_list[i]['id']=} but {image_id=}"
+            assert bboxes_list[i]["id"] == image_id, f"{bboxes_list[i]['id']=} but {image_id=}"
             image_torch = torch.from_numpy(image).permute(2, 0, 1)
             image_with_boxes_torch = draw_bounding_boxes(image_torch, bboxes)
             image_with_boxes = image_with_boxes_torch.permute(1, 2, 0).numpy()
@@ -944,9 +875,7 @@ def vis_segmentations(
             cols.append({"image": image_with_boxes})
 
         # Color
-        segmap_label_indices, segmap_label_counts = np.unique(
-            segmap, return_counts=True
-        )
+        segmap_label_indices, segmap_label_counts = np.unique(segmap, return_counts=True)
         blank_segmap_overlay = label2rgb(
             label=segmap_fullres,
             image=np.full_like(image, 128),
@@ -961,9 +890,7 @@ def vis_segmentations(
             bg_label=0,
             alpha=0.45,
         )
-        segmap_caption = dict(
-            zip(segmap_label_indices.tolist(), (segmap_label_counts).tolist())
-        )
+        segmap_caption = dict(zip(segmap_label_indices.tolist(), (segmap_label_counts).tolist()))
 
         # Streamlit
         cols.append({"image": blank_segmap_overlay, "caption": segmap_caption})

@@ -16,4 +16,6 @@ python .\extract\extract.py extract_bbox_features --model_name "dino_vits16" --i
 python .\extract\extract.py extract_bbox_clusters --bbox_features_file "..\dataset\dss\multi_region_bboxes\laplacian\bbox_features.pth" --num_clusters 2 --output_file "..\dataset\dss\multi_region_bboxes\laplacian\bbox_clusters.pth"
 
 # Create semantic segmentations
-python .\extract\extract.py extract_semantic_segmentations --segmentations_dir "..\dataset\dss\multi_region_segmentation\laplacian" --bbox_clusters_file "..\dataset\dss\multi_region_bboxes\laplacian\bbox_clusters.pth" --output_dir "..\dataset\dss\semantic_segmentations\patches\laplacian\segmaps" 
+python .\extract\extract.py extract_semantic_segmentations --segmentations_dir "..\dataset\dss\multi_region_segmentation\laplacian" --bbox_clusters_file "..\dataset\dss\multi_region_bboxes\laplacian\bbox_clusters.pth" --output_dir "..\dataset\dss\semantic_segmentations\patches\laplacian\segmaps"
+
+python .\extract\extract.py extract_crf_segmentations --images_list "..\dataset\metafiles\images_whithout_ind.txt" --images_root "..\dataset\WildBees\" --segmentations_dir "..\dataset\dss\semantic_segmentations\patches\laplacian\segmaps" --output_dir "..\dataset\dss\semantic_segmentations\crf\fixed\segmaps_e2_d5_pca_32"

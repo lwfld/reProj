@@ -1,5 +1,6 @@
 import gc
-from collections import namedtuple
+
+# from collections import namedtuple
 
 import numpy as np
 import scipy.sparse
@@ -104,8 +105,102 @@ else:
     device = torch.device("cpu")
 
 
+def get_segment(numEig=5, _todense=True):
+    """Get segment function, with <input> amount of eigenvectors
+
+    Params:
+        numEig_default: int, number of eigenvectors to be generated
+
+    Return:
+        segment Function
+    """
+
+    @torch.no_grad()
+    def segment(inp: Image, numEig=numEig, _todense=_todense):
+        # Preprocess image
+        images: torch.Tensor = val_transform(inp)
+        images = images.unsqueeze(0).to(device)
+
+        # Reshape image
+        P = patch_size
+        B, C, H, W = images.shape
+        H_patch, W_patch = H // P, W // P
+        H_pad, W_pad = H_patch * P, W_patch * P
+        T = H_patch * W_patch + 1  # number of tokens, add 1 for [CLS]
+
+        # Crop image to be a multiple of the patch size
+        images = images[:, :, :H_pad, :W_pad]
+
+        # Extract features
+        if "dino" in model_name or "mocov3" in model_name:
+            model.get_intermediate_layers(images)[0].squeeze(0)
+            output_qkv = feat_out["qkv"].reshape(B, T, 3, num_heads, -1 // num_heads).permute(2, 0, 3, 1, 4)
+            feats = output_qkv[1].transpose(1, 2).reshape(B, T, -1)[:, 1:, :].squeeze(0)
+        else:
+            raise ValueError(model_name)
+
+        # Normalize features
+        normalize = True
+        if normalize:
+            feats = F.normalize(feats, p=2, dim=-1)
+
+        # Compute affinity matrix
+        W_feat = feats @ feats.T
+
+        # Feature affinities
+        threshold_at_zero = True
+        if threshold_at_zero:
+            W_feat = W_feat * (W_feat > 0)
+        W_feat = W_feat / W_feat.max()  # NOTE: If features are normalized, this naturally does nothing
+        W_feat = W_feat.cpu().numpy()
+
+        # Diagonal
+        W_comb = W_feat
+
+        if _todense:
+            D_comb = np.array(_get_diagonal(W_comb).todense())  # is dense or sparse faster? not sure, should check-
+        else:
+            D_comb = _get_diagonal(W_comb)
+        # Compute eigenvectors
+        try:
+            eigenvalues, eigenvectors = eigsh(D_comb - W_comb, k=(numEig + 1), sigma=0, which="LM", M=D_comb)
+        except:
+            eigenvalues, eigenvectors = eigsh(D_comb - W_comb, k=(numEig + 1), which="SM", M=D_comb)
+        eigenvalues = torch.from_numpy(eigenvalues)
+        eigenvectors = torch.from_numpy(eigenvectors.T).float()
+
+        # print(eigenvectors[0].shape)
+
+        # Resolve sign ambiguity
+        for k in range(eigenvectors.shape[0]):
+            if 0.5 < torch.mean((eigenvectors[k] > 0).float()).item() < 1.0:  # reverse segment
+                eigenvectors[k] = 0 - eigenvectors[k]
+
+        preds = []
+        # eigenvectors_upscaled = []
+        for i in range(1, numEig + 1):
+            eigenvector = eigenvectors[i].reshape(1, 1, H_patch, W_patch)  # .reshape(1, 1, H_pad, W_pad)
+            eigenvector: torch.Tensor = F.interpolate(
+                # eigenvector, size=(H_pad, W_pad), mode="bilinear"
+                eigenvector,
+                size=(inp.size[1], inp.size[0]),
+                mode="bicubic",
+            )  # slightly off, but for visualizations this is okay
+            preds.append(eigenvector.squeeze())
+
+        # Garbage collection and other memory-related things
+        gc.collect()
+        # del eigenvector, eigenvector_vis, eigenvectors, W_comb, D_comb
+        del eigenvector, eigenvectors, W_comb, D_comb
+
+        # return output_images
+        return preds
+
+    return numEig, _todense, segment
+
+
 @torch.no_grad()
-def segment(inp: Image, numEig=5):
+def segment(inp: Image, numEig=5, _todence=True):
     """Get predictions from CLIPSeg model
 
     Params:
@@ -115,79 +210,5 @@ def segment(inp: Image, numEig=5):
     Return:
         List of Tensors.
     """
-
-    # Preprocess image
-    images: torch.Tensor = val_transform(inp)
-    images = images.unsqueeze(0).to(device)
-
-    # Reshape image
-    P = patch_size
-    B, C, H, W = images.shape
-    H_patch, W_patch = H // P, W // P
-    H_pad, W_pad = H_patch * P, W_patch * P
-    T = H_patch * W_patch + 1  # number of tokens, add 1 for [CLS]
-
-    # Crop image to be a multiple of the patch size
-    images = images[:, :, :H_pad, :W_pad]
-
-    # Extract features
-    if "dino" in model_name or "mocov3" in model_name:
-        model.get_intermediate_layers(images)[0].squeeze(0)
-        output_qkv = feat_out["qkv"].reshape(B, T, 3, num_heads, -1 // num_heads).permute(2, 0, 3, 1, 4)
-        feats = output_qkv[1].transpose(1, 2).reshape(B, T, -1)[:, 1:, :].squeeze(0)
-    else:
-        raise ValueError(model_name)
-
-    # Normalize features
-    normalize = True
-    if normalize:
-        feats = F.normalize(feats, p=2, dim=-1)
-
-    # Compute affinity matrix
-    W_feat = feats @ feats.T
-
-    # Feature affinities
-    threshold_at_zero = True
-    if threshold_at_zero:
-        W_feat = W_feat * (W_feat > 0)
-    W_feat = W_feat / W_feat.max()  # NOTE: If features are normalized, this naturally does nothing
-    W_feat = W_feat.cpu().numpy()
-
-    # Diagonal
-    W_comb = W_feat
-    D_comb = np.array(_get_diagonal(W_comb).todense())  # is dense or sparse faster? not sure, should check-
-
-    # Compute eigenvectors
-    try:
-        eigenvalues, eigenvectors = eigsh(D_comb - W_comb, k=(numEig + 1), sigma=0, which="LM", M=D_comb)
-    except:
-        eigenvalues, eigenvectors = eigsh(D_comb - W_comb, k=(numEig + 1), which="SM", M=D_comb)
-    eigenvalues = torch.from_numpy(eigenvalues)
-    eigenvectors = torch.from_numpy(eigenvectors.T).float()
-
-    # print(eigenvectors[0].shape)
-
-    # Resolve sign ambiguity
-    for k in range(eigenvectors.shape[0]):
-        if 0.5 < torch.mean((eigenvectors[k] > 0).float()).item() < 1.0:  # reverse segment
-            eigenvectors[k] = 0 - eigenvectors[k]
-
-    preds = []
-    # eigenvectors_upscaled = []
-    for i in range(1, numEig + 1):
-        eigenvector = eigenvectors[i].reshape(1, 1, H_patch, W_patch)  # .reshape(1, 1, H_pad, W_pad)
-        eigenvector: torch.Tensor = F.interpolate(
-            # eigenvector, size=(H_pad, W_pad), mode="bilinear"
-            eigenvector,
-            size=(inp.size[1], inp.size[0]),
-            mode="bilinear",
-        )  # slightly off, but for visualizations this is okay
-        preds.append(eigenvector.squeeze())
-
-    # Garbage collection and other memory-related things
-    gc.collect()
-    # del eigenvector, eigenvector_vis, eigenvectors, W_comb, D_comb
-    del eigenvector, eigenvectors, W_comb, D_comb
-
-    # return output_images
-    return preds
+    _, _, _segment = get_segment(numEig, _todence)
+    return _segment(inp)
